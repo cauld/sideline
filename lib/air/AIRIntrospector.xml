@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AIRAPIs xmlns="http://www.adobe.com/air/documentation/1.0" build="1.5" checksum="9c49dec7870a37e0e43d255f8375a21e">
+	<packages>
+		<asPackage name="window.air.Introspector">
+			<asClasses>
+				<class name="Console">
+					<methods>
+						<method name="log" isStatic="true" resultType="void">
+ 							<shortDescription>
+ 								Display message as a log message
+ 							</shortDescription>
+ 							<description>
+ 								Display message as a log message
+ 								Usage air.Introspector.Console.log(arg1,[[arg2], [[arg3]...]]])
+ 							</description>
+          					<params>
+          						<param name="arg1" type="Object" default="" />
+          					</params>
+          				</method>		
+          				<method name="error" isStatic="true" resultType="void">
+ 							<shortDescription>
+ 								Display message as a error message
+ 							</shortDescription>
+ 							<description>
+ 								Display message as a error message
+ 								Usage air.Introspector.Console.error(arg1,[[arg2], [[arg3]...]]])
+ 							</description>
+          					<params>
+          						<param name="arg1" type="Object" default="" />
+          					</params>
+          				</method>
+          				<method name="info" isStatic="true" resultType="void">
+ 							<shortDescription>
+ 								Display message as a info message
+ 							</shortDescription>
+ 							<description>
+ 								Display message as a info message
+ 								Usage air.Introspector.Console.info(arg1,[[arg2], [[arg3]...]]])
+ 							</description>
+          					<params>
+          						<param name="arg1" type="Object" default="" />
+          					</params>
+          				</method>
+          				<method name="warn" isStatic="true" resultType="void">
+ 							<shortDescription>
+ 								Display message as a warn message
+ 							</shortDescription>
+ 							<description>
+ 								Display message as a warn message
+ 								Usage air.Introspector.Console.warn(arg1,[[arg2], [[arg3]...]]])
+ 							</description>
+          					<params>
+          						<param name="arg1" type="Object" default="" />
+          					</params>
+          				</method>          				
+          				<method name="dump" isStatic="true" resultType="void">
+ 							<shortDescription>
+ 								Display an Object recursively
+ 							</shortDescription>
+ 							<description>
+ 								Display an Object recursively
+ 								Usage air.Introspector.Console.dump(dumpObject, maxRecursionLevel=2)
+ 							</description>
+          					<params>
+          						<param name="dumpObject" type="Object" default="" />
+          						<param name="maxRecursionLevel" type="int" default="2" />
+          					</params>
+          				</method>	
+					</methods>
+				</class>
+			</asClasses>
+		</asPackage>
+	</packages>
+</AIRAPIs>
