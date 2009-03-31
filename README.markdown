@@ -8,7 +8,7 @@ The official Sideline website is located at [http://sideline.yahoo.com](http://s
 background on Sideline reference the following [YUI Blog post](http://yuiblog.com/blog/2009/03/31/sideline-beta-released).
 
 ## Contact Info
-* Twitter - https://twitter.com/ysideline
+* Twitter - http://twitter.com/ysideline
 * Email   - sideline@yahoo-inc.com
 * Github  - http://github.com/cauld/sideline/tree/master
 
@@ -17,7 +17,10 @@ background on Sideline reference the following [YUI Blog post](http://yuiblog.co
 1. How often are my searches terms updated? - By default each search term is refreshed every 
 minute.  You can adjust the query rate under the options menu.
 
-2. Can I imported pre-defined search groups and related terms? - Sideline does support 
+2. How often is the trend data updated? - Sideline refreshes its trend data every 5 minutes.  It
+will grab whatever is the latest data available from Twitter at that time.
+
+3. Can I imported pre-defined search groups and related terms? - Sideline does support 
 importing of pre-defined search groups.  This is useful for loading up a large amount 
 of specific search groups and custom search queries without laboring through the UI each 
 time.  To use this create a basic text file with a .ssf extension (Sideline Search Format).  In 
