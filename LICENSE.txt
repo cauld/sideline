@@ -1,4 +1,5 @@
 Software License Agreement (BSD License)
+Copyright (c) 2009, Appcelerator, Inc. AND
 Copyright (c) 2009, Yahoo! Inc.
 All rights reserved.
 

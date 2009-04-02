@@ -1,3 +1,19 @@
+# Titanium Sideline #
+
+This project is a derivative work of [Yahoo!'s Sideline Twitter Utility](http://sideline.yahoo.com).
+This application substitutes the Adobe Integrated Runtime (AIR) with the open source 
+[Appcelerator Titanium](http://titaniumapp.com) runtime for desktop applications developed with
+Open Web technologies.
+
+Yahoo!, Y! and their respective logos are the trademarks or registered trademarks of Yahoo! Inc.
+
+[Join the Appcelerator Developer Community](http://community.appcelerator.org) to get more information
+and support building apps for Titanium.  Code Strong!
+
+***
+# Original README From Yahoo! #
+***
+
 Copyright (c) 2008-2009 Yahoo! Inc.  All rights reserved.  
 The copyrights embodied in the content of this file are licensed by Yahoo! Inc. under 
 the BSD (revised) open source license.

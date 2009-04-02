@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AIRAPIs xmlns="http://www.adobe.com/air/documentation/1.0" build="1.5" checksum="cbcebdac14a9eb9ed1ed037f5851c012">
+          <packages>
+          <asPackage name="window.air">
+          <asClasses>
+          
+          <class name="NativeWindowType" alias="window.runtime.flash.display.NativeWindowType"/>
+          <class name="NativeWindowInitOptions" alias="window.runtime.flash.display.NativeWindowInitOptions"/>
+          <class name="NativeWindow" alias="window.runtime.flash.display.NativeWindow"/>
+          <class name="Bitmap" alias="window.runtime.flash.display.Bitmap"/>
+          <class name="Shader" alias="window.runtime.flash.display.Shader"/>
+          <class name="NativeWindowDisplayState" alias="window.runtime.flash.display.NativeWindowDisplayState"/>
+          <class name="NativeMenuItem" alias="window.runtime.flash.display.NativeMenuItem"/>
+          <class name="ShaderPrecision" alias="window.runtime.flash.display.ShaderPrecision"/>
+          <class name="BitmapData" alias="window.runtime.flash.display.BitmapData"/>
+          <class name="NativeWindowSystemChrome" alias="window.runtime.flash.display.NativeWindowSystemChrome"/>
+          <class name="Screen" alias="window.runtime.flash.display.Screen"/>
+          <class name="NativeWindowResize" alias="window.runtime.flash.display.NativeWindowResize"/>
+          <class name="NativeMenu" alias="window.runtime.flash.display.NativeMenu"/>
+          <class name="Loader" alias="window.runtime.flash.display.Loader"/>
+          
+          
+          
+          
+          <class name="SQLError" alias="window.runtime.flash.errors.SQLError"/>
+          <class name="SQLErrorOperation" alias="window.runtime.flash.errors.SQLErrorOperation"/>
+          
+          
+          <class name="Keyboard" alias="window.runtime.flash.ui.Keyboard"/>
+          <class name="Mouse" alias="window.runtime.flash.ui.Mouse"/>
+          <class name="KeyLocation" alias="window.runtime.flash.ui.KeyLocation"/>
+          
+          
+          <class name="Matrix" alias="window.runtime.flash.geom.Matrix"/>
+          <class name="Vector3D" alias="window.runtime.flash.geom.Vector3D"/>
+          <class name="Point" alias="window.runtime.flash.geom.Point"/>
+          <class name="Rectangle" alias="window.runtime.flash.geom.Rectangle"/>
+          <class name="Matrix3D" alias="window.runtime.flash.geom.Matrix3D"/>
+          <class name="Utils3D" alias="window.runtime.flash.geom.Utils3D"/>
+          <class name="Orientation3D" alias="window.runtime.flash.geom.Orientation3D"/>
+          
+          
+          <class name="SignerTrustSettings" alias="window.runtime.flash.security.SignerTrustSettings"/>
+          <class name="ReferencesValidationSetting" alias="window.runtime.flash.security.ReferencesValidationSetting"/>
+          <class name="SignatureStatus" alias="window.runtime.flash.security.SignatureStatus"/>
+          <class name="XMLSignatureValidator" alias="window.runtime.flash.security.XMLSignatureValidator"/>
+          <class name="RevocationCheckSettings" alias="window.runtime.flash.security.RevocationCheckSettings"/>
+          
+          
+          <class name="NativeApplication" alias="window.runtime.flash.desktop.NativeApplication"/>
+          <class name="NativeDragManager" alias="window.runtime.flash.desktop.NativeDragManager"/>
+          <class name="Clipboard" alias="window.runtime.flash.desktop.Clipboard"/>
+          <class name="Icon" alias="window.runtime.flash.desktop.Icon"/>
+          <class name="DockIcon" alias="window.runtime.flash.desktop.DockIcon"/>
+          <class name="ClipboardFormats" alias="window.runtime.flash.desktop.ClipboardFormats"/>
+          <class name="InteractiveIcon" alias="window.runtime.flash.desktop.InteractiveIcon"/>
+          <class name="NotificationType" alias="window.runtime.flash.desktop.NotificationType"/>
+          <class name="NativeDragOptions" alias="window.runtime.flash.desktop.NativeDragOptions"/>
+          <class name="ClipboardTransferMode" alias="window.runtime.flash.desktop.ClipboardTransferMode"/>
+          <class name="SystemTrayIcon" alias="window.runtime.flash.desktop.SystemTrayIcon"/>
+          <class name="NativeDragActions" alias="window.runtime.flash.desktop.NativeDragActions"/>
+          
+          
+          <class name="SharedObject" alias="window.runtime.flash.net.SharedObject"/>
+          <class name="NetStream" alias="window.runtime.flash.net.NetStream"/>
+          <class name="URLRequestMethod" alias="window.runtime.flash.net.URLRequestMethod"/>
+          <class name="Socket" alias="window.runtime.flash.net.Socket"/>
+          <class name="XMLSocket" alias="window.runtime.flash.net.XMLSocket"/>
+          <class name="URLRequestDefaults" alias="window.runtime.flash.net.URLRequestDefaults"/>
+          <class name="URLLoader" alias="window.runtime.flash.net.URLLoader"/>
+          <class name="FileFilter" alias="window.runtime.flash.net.FileFilter"/>
+          <class name="URLVariables" alias="window.runtime.flash.net.URLVariables"/>
+          <class name="NetStreamPlayOptions" alias="window.runtime.flash.net.NetStreamPlayOptions"/>
+          <class name="URLRequest" alias="window.runtime.flash.net.URLRequest"/>
+          <class name="Responder" alias="window.runtime.flash.net.Responder"/>
+          <class name="LocalConnection" alias="window.runtime.flash.net.LocalConnection"/>
+          <class name="ObjectEncoding" alias="window.runtime.flash.net.ObjectEncoding"/>
+          <class name="URLStream" alias="window.runtime.flash.net.URLStream"/>
+          <class name="URLRequestHeader" alias="window.runtime.flash.net.URLRequestHeader"/>
+          <class name="NetStreamPlayTransitions" alias="window.runtime.flash.net.NetStreamPlayTransitions"/>
+          <class name="SharedObjectFlushStatus" alias="window.runtime.flash.net.SharedObjectFlushStatus"/>
+          <class name="URLLoaderDataFormat" alias="window.runtime.flash.net.URLLoaderDataFormat"/>
+          <class name="NetConnection" alias="window.runtime.flash.net.NetConnection"/>
+          <class name="NetStreamInfo" alias="window.runtime.flash.net.NetStreamInfo"/>
+          
+          
+          <class name="Timer" alias="window.runtime.flash.utils.Timer"/>
+          <class name="Endian" alias="window.runtime.flash.utils.Endian"/>
+          <class name="ByteArray" alias="window.runtime.flash.utils.ByteArray"/>
+          <class name="CompressionAlgorithm" alias="window.runtime.flash.utils.CompressionAlgorithm"/>
+          
+          
+          <class name="ShaderFilter" alias="window.runtime.flash.filters.ShaderFilter"/>
+          
+          
+          <class name="File" alias="window.runtime.flash.filesystem.File"/>
+          <class name="FileMode" alias="window.runtime.flash.filesystem.FileMode"/>
+          <class name="FileStream" alias="window.runtime.flash.filesystem.FileStream"/>
+          
+          
+          <class name="SQLConnection" alias="window.runtime.flash.data.SQLConnection"/>
+          <class name="SQLResult" alias="window.runtime.flash.data.SQLResult"/>
+          <class name="SQLColumnNameStyle" alias="window.runtime.flash.data.SQLColumnNameStyle"/>
+          <class name="SQLTriggerSchema" alias="window.runtime.flash.data.SQLTriggerSchema"/>
+          <class name="SQLStatement" alias="window.runtime.flash.data.SQLStatement"/>
+          <class name="SQLTransactionLockType" alias="window.runtime.flash.data.SQLTransactionLockType"/>
+          <class name="SQLColumnSchema" alias="window.runtime.flash.data.SQLColumnSchema"/>
+          <class name="SQLTableSchema" alias="window.runtime.flash.data.SQLTableSchema"/>
+          <class name="SQLSchema" alias="window.runtime.flash.data.SQLSchema"/>
+          <class name="SQLViewSchema" alias="window.runtime.flash.data.SQLViewSchema"/>
+          <class name="SQLIndexSchema" alias="window.runtime.flash.data.SQLIndexSchema"/>
+          <class name="SQLSchemaResult" alias="window.runtime.flash.data.SQLSchemaResult"/>
+          <class name="SQLMode" alias="window.runtime.flash.data.SQLMode"/>
+          <class name="SQLCollationType" alias="window.runtime.flash.data.SQLCollationType"/>
+          <class name="EncryptedLocalStore" alias="window.runtime.flash.data.EncryptedLocalStore"/>
+          
+          
+          <class name="DRMAuthenticateEvent" alias="window.runtime.flash.events.DRMAuthenticateEvent"/>
+          <class name="InvokeEvent" alias="window.runtime.flash.events.InvokeEvent"/>
+          <class name="AsyncErrorEvent" alias="window.runtime.flash.events.AsyncErrorEvent"/>
+          <class name="StatusEvent" alias="window.runtime.flash.events.StatusEvent"/>
+          <class name="EventDispatcher" alias="window.runtime.flash.events.EventDispatcher"/>
+          <class name="DRMStatusEvent" alias="window.runtime.flash.events.DRMStatusEvent"/>
+          <class name="Event" alias="window.runtime.flash.events.Event"/>
+          <class name="NetStatusEvent" alias="window.runtime.flash.events.NetStatusEvent"/>
+          <class name="DataEvent" alias="window.runtime.flash.events.DataEvent"/>
+          <class name="SQLErrorEvent" alias="window.runtime.flash.events.SQLErrorEvent"/>
+          <class name="KeyboardEvent" alias="window.runtime.flash.events.KeyboardEvent"/>
+          <class name="TimerEvent" alias="window.runtime.flash.events.TimerEvent"/>
+          <class name="BrowserInvokeEvent" alias="window.runtime.flash.events.BrowserInvokeEvent"/>
+          <class name="NativeWindowDisplayStateEvent" alias="window.runtime.flash.events.NativeWindowDisplayStateEvent"/>
+          <class name="ProgressEvent" alias="window.runtime.flash.events.ProgressEvent"/>
+          <class name="NativeDragEvent" alias="window.runtime.flash.events.NativeDragEvent"/>
+          <class name="SQLUpdateEvent" alias="window.runtime.flash.events.SQLUpdateEvent"/>
+          <class name="IOErrorEvent" alias="window.runtime.flash.events.IOErrorEvent"/>
+          <class name="SQLEvent" alias="window.runtime.flash.events.SQLEvent"/>
+          <class name="SecurityErrorEvent" alias="window.runtime.flash.events.SecurityErrorEvent"/>
+          <class name="MouseEvent" alias="window.runtime.flash.events.MouseEvent"/>
+          <class name="OutputProgressEvent" alias="window.runtime.flash.events.OutputProgressEvent"/>
+          <class name="ErrorEvent" alias="window.runtime.flash.events.ErrorEvent"/>
+          <class name="FileListEvent" alias="window.runtime.flash.events.FileListEvent"/>
+          <class name="SampleDataEvent" alias="window.runtime.flash.events.SampleDataEvent"/>
+          <class name="ActivityEvent" alias="window.runtime.flash.events.ActivityEvent"/>
+          <class name="NativeWindowBoundsEvent" alias="window.runtime.flash.events.NativeWindowBoundsEvent"/>
+          <class name="HTTPStatusEvent" alias="window.runtime.flash.events.HTTPStatusEvent"/>
+          
+          
+          <class name="HTMLLoader" alias="window.runtime.flash.html.HTMLLoader"/>
+          <class name="HTMLPDFCapability" alias="window.runtime.flash.html.HTMLPDFCapability"/>
+          
+          
+          <class name="SoundLoaderContext" alias="window.runtime.flash.media.SoundLoaderContext"/>
+          <class name="ID3Info" alias="window.runtime.flash.media.ID3Info"/>
+          <class name="Microphone" alias="window.runtime.flash.media.Microphone"/>
+          <class name="Video" alias="window.runtime.flash.media.Video"/>
+          <class name="Camera" alias="window.runtime.flash.media.Camera"/>
+          <class name="Sound" alias="window.runtime.flash.media.Sound"/>
+          <class name="SoundCodec" alias="window.runtime.flash.media.SoundCodec"/>
+          <class name="SoundTransform" alias="window.runtime.flash.media.SoundTransform"/>
+          <class name="SoundMixer" alias="window.runtime.flash.media.SoundMixer"/>
+          <class name="SoundChannel" alias="window.runtime.flash.media.SoundChannel"/>
+          
+          
+          <class name="Security" alias="window.runtime.flash.system.Security"/>
+          <class name="System" alias="window.runtime.flash.system.System"/>
+          <class name="Capabilities" alias="window.runtime.flash.system.Capabilities"/>
+          
+          </asClasses><methods>
+          
+          <method name="trace" alias="window.runtime.trace"/>
+          
+          
+          
+          
+          
+          
+          
+          <method name="navigateToURL" alias="window.runtime.flash.net.navigateToURL"/>
+          <method name="sendToURL" alias="window.runtime.flash.net.sendToURL"/>
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          </methods>
+          </asPackage>
+          </packages>
+         </AIRAPIs>

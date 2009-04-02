@@ -1,0 +1,24 @@
+#appname:ti-sideline
+#appid:com.appcelerator_inc_.ti_sideline
+#publisher:Appcelerator Inc.
+#image:appc150x119.png
+#url:http://appcelerator.org
+#guid:bb25890b-b5cd-45e4-9cf6-beb0eee03367
+#desc:Titanium Port of Yahoo! Sideline
+runtime:0.3
+api:0.3
+tiapp:0.3
+tifilesystem:0.3
+tiplatform:0.3
+tiui:0.3
+javascript:0.3
+tianalytics:0.3
+python:0.3
+ruby:0.3
+tidesktop:0.3
+tigrowl:0.3
+timedia:0.3
+timonkey:0.3
+tinetwork:0.3
+tinotification:0.3
+tiprocess:0.3
