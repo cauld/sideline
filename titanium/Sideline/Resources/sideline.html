@@ -1,0 +1,302 @@
+<!-- Copyright (c) 2008-2009 Yahoo! Inc.  All rights reserved.  
+The copyrights embodied in the content of this file are licensed by Yahoo! Inc. under 
+the BSD (revised) open source license. -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	    <title>Sideline by Yahoo!</title>
+		<link rel="stylesheet" type="text/css" href="lib/yui/reset-fonts-grids/reset-fonts-grids.css" />
+		<link rel="stylesheet" type="text/css" href="lib/yui/assets/skins/sam/skin.css" />
+		<link rel="stylesheet" type="text/css" href="lib/yui/slider/assets/skins/sam/slider.css" />
+		<link rel="stylesheet" type="text/css" href="css/sideline.css" />
+	</head>
+	<body class="yui-skin-sam">
+		<div id="doc3" class="yui-t5">
+   			<div id="hd" role="banner">
+   				<img id="logo" src="images/sideline.png" alt="Sideline logo" />
+				<div id="options_menu"></div>
+   			</div>
+		   	<div id="bd" role="main">
+				<div id="yui-main">
+					<div class="yui-b">
+						<div role="application" class="yui-g">
+							<div id="tweetainer"></div>
+						</div>
+					</div>
+				</div>
+				<div role="navigation" class="yui-b">
+					<div id="active_search_container" class="yui-u">
+						<span id="active_search_header">
+							<img id="active_search_image" src="images/active_searches.png" alt="Active Searches" />
+							<img id="information" src="images/information.png" alt="Information" />
+						</span>
+						<img id="add_new_search" src="images/add_search_term.png" alt="Add Search Term" />
+						<div id="active_search_list">
+							<ul id="active_search_strings">
+								<!-- We default to Favorites which will never have search strings -->
+								<li class="list_message">The Favorites group does not contain specific search items. Instead it contains a collection of your favorite search results.</li>
+							</ul>
+							<div id="search">
+								<span id="search_progress_indicator">
+									<img src="images/search_in_progress.gif" alt="refresh" />
+									<span> Search in Progress ...</span>	
+								</span>
+								<img id="manual_refresh" src="images/refresh.png" alt="Manual Refresh" />
+							</div>
+							<p id="search_group_result_count"></p>
+						</div>
+    				</div>
+				</div>
+			</div>
+			<div id="ft" role="contentinfo">
+				Copyright &copy; 2009 Yahoo! Inc.  All Rights Reserved.  Made with the <a id="yui_link" href="http://developer.yahoo.com/yui/">Yahoo! User Interface Library (YUI)</a>.
+				<img class="from-yahoo" src="images/from_yahoo_small.png" alt="from Yahoo!" />
+			</div>
+		</div>
+			
+		<!-- Dynamic dialogs below here -->
+		<div id="tooltip" style="visibility: hidden;">
+			<div class="hd">Background Information</div>
+			<div class="bd">
+				<p><span class="key_term">Search Groups</span> are used to define a container for related searches (ex) Social Apps.</p>
+				<p><span class="key_term">Active Search Items</span> are used to define specific search terms within the containing Search Group (ex) Twitter, Facebook, etc.</p>
+				<p>New searches are executed based on the specified refresh rate.  Search results older than a few hours are not redrawn on restart.  To keep an item permanently add it to your favorites.</p>
+			</div>
+			<div class="ft"></div>
+		</div>
+		
+		<div id="search_rate_dialog" style="visibility: hidden;">
+			<div class="hd">Search Refresh Rate</div>
+			<div class="bd">
+				<div id="slider-bg" class="yui-h-slider" tabindex="-1" title="Slider">
+				    <div id="slider-thumb" class="yui-slider-thumb"><img src="images/thumb-n.gif"></div>
+				</div>
+				<p>Refresh every <span id="slider-converted-value">1</span> minute(s)</p>
+			</div>
+		</div>
+		
+		<div id="search_item_simpledialog"></div>
+		
+		<div id="add_search_group_dialog">
+			<div class="hd">Add New Search Group</div>
+			<div class="bd">
+				<form id="add_search_group_form" method="post" action="sideline.html">
+					<label for="search_group_title">Title of Search Group</label>
+					<input id="search_group_title" name="search_group_title" type="text" />
+				</form>
+			</div>
+		</div>
+		
+		<div id="rename_search_group_dialog">
+			<div class="hd">Rename Search Group</div>
+			<div class="bd">
+				<form id="rename_search_group_form" method="post" action="sideline.html">
+					<label for="new_search_group_title">Title of Search Group</label>
+					<input id="new_search_group_title" name="new_search_group_title" type="text" />
+					<input id="old_search_group_title" name="old_search_group_title" type="hidden" />
+				</form>
+			</div>
+		</div>
+		
+		<div id="add_search_dialog">
+			<div class="hd">Search Builder</div>
+			<div class="bd">
+				<form id="add_search_form">
+					<!-- Mimic Twitters native simple/adv search forms -->
+					<table cellspacing="0">
+						<tr>
+			                <th colspan="2">
+			                    <em>Name this Search</em>
+			                </th>
+			                <td>
+			                    <input id="title_of_search" name="title_of_search" type="text" />
+			                </td>
+			            </tr>
+						<tr>
+			                <td colspan="3" class="sep"></td>
+			            </tr>
+					</table>
+					<hr />
+					<div id="simple_search">
+						<p><em class="search-type-header">Simple Search</em></p>
+						<br />
+						<table cellspacing="0">	
+				            <tr>
+				                <td>
+				                    Search for
+				                </td>
+				                <td>
+				                    <input id="q" name="q" type="text" />
+				                </td>
+				            </tr>
+						</table>
+						<br />
+						<a id="show_advanced_search" href="sideline.html">Advanced Search</a>
+					</div>		
+					<div id="advanced_search" style="display: none;">
+					<p><em class="search-type-header">Advanced Search</em></p>
+						<table cellspacing="0">
+							<tr>
+				                <td colspan="3" class="sep"></td>
+				            </tr>
+				            <tr>
+				                <td colspan="2">
+				                    <em>Find tweets based on...</em>
+				                </td>
+				            </tr>
+				            <tr>
+				                <th>
+				                    <em>Words</em>
+				                </th>
+				                <td>
+				                    All of these words
+				                </td>
+				                <td>
+				                    <input id="ands" name="ands" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    This exact phrase
+				                </td>
+				                <td>
+				                    <input class="long" id="phrase" name="phrase" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    Any of these words
+				                </td>
+				                <td>
+				                    <input class="long" id="ors" name="ors" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    None of these words
+				                </td>
+				                <td>
+				                    <input class="long" id="nots" name="nots" type="text" />
+				                </td>
+				            </tr>
+							<tr>
+								<th></th>
+								<td>This hashtag</td>
+								<td>
+									<input class="short" id="tag" name="tag" type="text" />
+								</td>
+							</tr>
+				            <tr>
+				                <td colspan="3" class="sep"></td>
+				            </tr>
+				            <tr>
+				                <th>
+				                    <em>People</em>
+				                </th>
+				                <td>
+				                    From this person
+				                </td>
+				                <td>
+				                    <input class="short" id="from" name="from" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    To this person
+				                </td>
+				                <td>
+				                    <input class="short" id="to" name="to" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    Referencing this person
+				                </td>
+				                <td>
+				                    <input class="short" id="ref" name="ref" type="text" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <td colspan="3" class="sep"></td>
+				            </tr>
+				            <tr>
+				                <th>
+				                    <em>Attitudes</em>
+				                </th>
+				                <td>
+				                    With positive attitude :)
+				                </td>
+				                <td>
+				                    <input id="pa" name="pa" type="checkbox" value=":)" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    With negative attitude :(
+				                </td>
+				                <td>
+				                    <input id="na" name="na" type="checkbox" value=":(" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <th></th>
+				                <td>
+				                    Asking a question ?
+				                </td>
+				                <td>
+				                    <input id="aq" name="aq" type="checkbox" value="?" />
+				                </td>
+				            </tr>
+				            <tr>
+				                <td colspan="3" class="sep"></td>
+				            </tr>
+				        </table>
+						<br />
+						<a id="show_simple_search" href="sideline.html">Simple Search</a>
+					</div>
+					<input type="hidden" id="search_to_update" name="search_to_update" value="" />
+				</form>
+			</div>
+		</div>
+		
+		<!-- 
+			The YUI files below can be included individually and have been left in here for informational purposes.  However,
+			for performance purposes this app will uses the custom combo file created with the YUI Dependency Configurator.
+			
+			Exact link to recreate/modify from is:
+			http://developer.yahoo.com/yui/articles/hosting/?animation&button&container&dom&dragdrop&element&event&json&menu&reset-fonts-grids&selector&slider&tabview&MIN
+		-->
+		<!--
+		<script type="text/javascript" src="lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="lib/yui/animation/animation-min.js"></script>
+		<script type="text/javascript" src="lib/yui/element/element-min.js"></script>
+		<script type="text/javascript" src="lib/yui/dragdrop/dragdrop-min.js"></script>
+		<script type="text/javascript" src="lib/yui/container/container-min.js"></script>
+		<script type="text/javascript" src="lib/yui/menu/menu-min.js"></script>
+		<script type="text/javascript" src="lib/yui/button/button-min.js"></script>
+		<script type="text/javascript" src="lib/yui/json/json-min.js"></script>
+		<script type="text/javascript" src="lib/yui/selector/selector-min.js"></script>
+		<script type="text/javascript" src="lib/yui/slider/slider-min.js"></script>
+		<script type="text/javascript" src="lib/yui/tabview/tabview-min.js"></script>
+		-->
+		<script type="text/javascript" src="lib/yui/sideline_yui_combo.js"></script>
+        <script type="text/javascript" src="js/sideline.js"></script>
+		
+		<!-- Preload some images which used later in hover effects -->
+		<img class="preload" src="images/delete_active.png" alt="preload" />
+		<img class="preload" src="images/dialog_close_active.png" alt="preload" />
+		<img class="preload" src="images/fav_active.png" alt="preload" />
+		<img class="preload" src="images/reply_active.png" alt="preload" />
+		<img class="preload" src="images/add_trend_tab_active.png" alt="preload" />
+		<img class="preload" src="images/trends_inactive.png" alt="preload" />
+    </body>
+</html>
