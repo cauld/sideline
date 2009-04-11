@@ -574,11 +574,11 @@ YAHOO.util.Event.onDOMReady(function () {
 				
 				//Add a new tab per group
 				tabLabel = this.buildTabText(sidelineGroups.data[i].group_name);
-			    this.tabView.addTab(new YAHOO.widget.Tab({
-			        label: tabLabel,
-			        content: tweetStr,
-			        active: false
-			    }));
+			  this.tabView.addTab(new YAHOO.widget.Tab({
+			    label: tabLabel,
+			    content: tweetStr,
+			    active: false
+			  }));
 				
 				this.tabView.appendTo('tweetainer'); //Inject new tab
 			}
