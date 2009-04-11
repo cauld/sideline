@@ -10,9 +10,8 @@ Yahoo!, Y! and their respective logos are the trademarks or registered trademark
 [Join the Appcelerator Developer Community](http://community.appcelerator.org) to get more information
 and support building apps for Titanium.  Code Strong!
 
-***
+
 # Original README From Yahoo! #
-***
 
 Copyright (c) 2008-2009 Yahoo! Inc.  All rights reserved.  
 The copyrights embodied in the content of this file are licensed by Yahoo! Inc. under 
