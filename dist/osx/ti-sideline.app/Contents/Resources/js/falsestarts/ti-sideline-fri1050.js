@@ -5,15 +5,14 @@
  */
 
 YAHOO.util.Event.onDOMReady(function () {
-
-	YAHOO.namespace("AIR");
+	YAHOO.namespace("TI");
 	
-	YAHOO.AIR.Sideline = function () {
+	YAHOO.TI.Sideline = function () {
 		var rotationTimer,
 			rotationJobCount = 0,
 			rotationTotal    = 0;
 	};
-	YAHOO.AIR.Sideline.prototype = {
+	YAHOO.TI.Sideline.prototype = {
 		tabView: null,
 		tabStore: [],
 		showDesktopNotifications: null,
@@ -93,69 +92,70 @@ YAHOO.util.Event.onDOMReady(function () {
 					aq = "" + aq + "";
 					
 					//Identify active search_id (if edit), group_id, and do save
-					var searchId = YAHOO.util.Dom.get("search_to_update").value,
-						grpId = that.getCurrentGrpId(),
-						searchItemDetails = {
-		 									"group_id": grpId,
-										 	"search_title": title,
-										 	"actual_query_string": queryString,
-											"q": q,
-										 	"ands": ands,
-										 	"ors": ors,
-											"nots": nots,
-										 	"phrase": phrase,
-										 	"tag": tag,
-										 	"user_from": from,
-										 	"user_to": to,
-										 	"ref": ref,
-										 	"pa": pa,
-										 	"na": na,
-										 	"aq": aq
-		 								};
-										
-					//Is this a new search term or an update for an existing one?
-					if (searchId === '') {
-						var newQueryStringId = that.addSearchItem(searchItemDetails);
-						
-						if (newQueryStringId.data !== null) {
-							//Inject new list item into the DOM
-							var newLi = that.create("li");
-							newLi.id = 'search__' + newQueryStringId.data[0].id;
-							YAHOO.util.Dom.addClass(newLi, 'search_string_item');
-							newLi.innerHTML = title;
-							var countOfSearchItems = YAHOO.util.Dom.getElementsByClassName('search_string_item', 'li', 'active_search_strings').length;
-							var lastActiveSearchItem = YAHOO.util.Dom.getLastChild('active_search_strings');
-							YAHOO.util.Dom.insertAfter(newLi, lastActiveSearchItem);
-							
-							//If this was the first real search item then remove the stub
-							if (countOfSearchItems === 'undefined' || countOfSearchItems === 0) {
-								var firstChild = YAHOO.util.Dom.getFirstChild('active_search_strings');
-								that.remove(firstChild);
-							}
-							
-							this.hide(); //Hide the search dialog after sucessful save
-							YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
-						}
-						else {
-							alert('Unable to add new search string!  Please try again.');
-						}
-					} else {
-						that.updateSearchItem(searchId, searchItemDetails);
-						YAHOO.util.Dom.get('search__' + searchId).innerHTML = title; //Since the title may have changed
-						this.hide(); //Hide the search dialog after sucessful save
-						
-						//The search has changed, cleanup old results
-						that.removeSearchTermTweets(grpId, searchId);
-						//If that removed everything from the group put the empty block back
-						var currentSummaryGrp = YAHOO.util.Dom.get("summary-group-" + grpId);
-						if (!currentSummaryGrp.hasChildNodes()) {
-							currentSummaryGrp.innerHTML = '<p id="emptygroup__' + grpId + '">This group has no search results yet!</p>';
-						}
-						
-						YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
-					}
-					
-					that.doIntermediateDataRotation.call(that); //Run a rotation immediately
+					that.getCurrentGrpId(function(grpId) {
+					  var searchId = YAHOO.util.Dom.get("search_to_update").value;
+  					var	searchItemDetails = {
+  		 									"group_id": grpId,
+  										 	"search_title": title,
+  										 	"actual_query_string": queryString,
+  											"q": q,
+  										 	"ands": ands,
+  										 	"ors": ors,
+  											"nots": nots,
+  										 	"phrase": phrase,
+  										 	"tag": tag,
+  										 	"user_from": from,
+  										 	"user_to": to,
+  										 	"ref": ref,
+  										 	"pa": pa,
+  										 	"na": na,
+  										 	"aq": aq
+  		 								};
+
+  					//Is this a new search term or an update for an existing one?
+  					if (searchId === '') {
+  						that.addSearchItem(searchItemDetails,function(newQueryStringId) {
+  						  if (newQueryStringId.rows !== null) {
+    							//Inject new list item into the DOM
+    							var newLi = that.create("li");
+    							newLi.id = 'search__' + newQueryStringId.rows.item(0).id;
+    							YAHOO.util.Dom.addClass(newLi, 'search_string_item');
+    							newLi.innerHTML = title;
+    							var countOfSearchItems = YAHOO.util.Dom.getElementsByClassName('search_string_item', 'li', 'active_search_strings').length;
+    							var lastActiveSearchItem = YAHOO.util.Dom.getLastChild('active_search_strings');
+    							YAHOO.util.Dom.insertAfter(newLi, lastActiveSearchItem);
+
+    							//If this was the first real search item then remove the stub
+    							if (countOfSearchItems === 'undefined' || countOfSearchItems === 0) {
+    								var firstChild = YAHOO.util.Dom.getFirstChild('active_search_strings');
+    								that.remove(firstChild);
+    							}
+
+    							this.hide(); //Hide the search dialog after sucessful save
+    							YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
+    						}
+    						else {
+    							alert('Unable to add new search string!  Please try again.');
+    						}
+  						});
+  					} else {
+  						that.updateSearchItem(searchId, searchItemDetails);
+  						YAHOO.util.Dom.get('search__' + searchId).innerHTML = title; //Since the title may have changed
+  						this.hide(); //Hide the search dialog after sucessful save
+
+  						//The search has changed, cleanup old results
+  						that.removeSearchTermTweets(grpId, searchId);
+  						//If that removed everything from the group put the empty block back
+  						var currentSummaryGrp = YAHOO.util.Dom.get("summary-group-" + grpId);
+  						if (!currentSummaryGrp.hasChildNodes()) {
+  							currentSummaryGrp.innerHTML = '<p id="emptygroup__' + grpId + '">This group has no search results yet!</p>';
+  						}
+
+  						YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
+  					}
+
+  					that.doIntermediateDataRotation.call(that); //Run a rotation immediately
+					});
 				}
 				
 			};
@@ -173,16 +173,18 @@ YAHOO.util.Event.onDOMReady(function () {
 					//Do the delete/fade of the search term and remove the related search results....
 					that.removeSearchItem(currentSearchId);
 					that.fadeThisOut(YAHOO.util.Dom.get('search__' + currentSearchId), true);
-					that.removeSearchTermTweets(that.getCurrentGrpId(), currentSearchId);
-					
-					//If this was the last search item in the list then readd the stub
-					if (countOfSearchItems === 'undefined' || countOfSearchItems <= 1) {
-						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
-						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
-					}
-					
-					YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
-					this.cancel();
+					that.getCurrentGrpId(function(grpId) {
+					  that.removeSearchTermTweets(grpId, currentSearchId);
+
+  					//If this was the last search item in the list then readd the stub
+  					if (countOfSearchItems === 'undefined' || countOfSearchItems <= 1) {
+  						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
+  						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
+  					}
+
+  					YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
+  					this.cancel();
+					});
 				}
 			};
 		
@@ -247,34 +249,35 @@ YAHOO.util.Event.onDOMReady(function () {
 					alert('You must provide a title for this search group!');
 					return false;
 				} else {
-					var tabLabel,
-						newGroupId = that.addNewSearchGroup(search_group_title);
-					if (newGroupId.data !== null) {
-						//Remove
-						
-						//New group was created so add the new tab, make it active, and replace the add tab button
-						that.remove(YAHOO.util.Dom.get("add_new_group"));
-						tabLabel = that.buildTabText(search_group_title);
-						that.tabView.addTab(new YAHOO.widget.Tab({ 
-														label: tabLabel,
-														active: true,
-														content: '<div id="summary-group-' + newGroupId.data[0].id + '" class="tweet-container summary-group-' + newGroupId.data[0].id + '">' +
-																	'<p id="emptygroup__' + newGroupId.data[0].id + '">This group has no search results yet!</p><div>'
-													})
-												);
-						
-						that.setupNewTabButton();
-						that.refreshTabStore();  //Refresh tabStore to pickup new tab
-						
-						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
-						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
-						
-						this.hide(); //Hide the search group dialog after sucessful save
-						YAHOO.util.Dom.get('add_search_group_form').reset(); //Prepare for future use
-						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible'); //Set to display on tab change, but if first tab this would be missing
-					} else {
-						alert('Unable to add new Search Group!  Please try again.');
-					}
+					var tabLabel;
+					that.addNewSearchGroup(search_group_title,function(newGroupId) {
+					  if (newGroupId.rows !== null) {
+  						//Remove
+
+  						//New group was created so add the new tab, make it active, and replace the add tab button
+  						that.remove(YAHOO.util.Dom.get("add_new_group"));
+  						tabLabel = that.buildTabText(search_group_title);
+  						that.tabView.addTab(new YAHOO.widget.Tab({ 
+  														label: tabLabel,
+  														active: true,
+  														content: '<div id="summary-group-' + newGroupId.rows[0].id + '" class="tweet-container summary-group-' + newGroupId.rows[0].id + '">' +
+  																	'<p id="emptygroup__' + newGroupId.data[0].id + '">This group has no search results yet!</p><div>'
+  													})
+  												);
+
+  						that.setupNewTabButton();
+  						that.refreshTabStore();  //Refresh tabStore to pickup new tab
+
+  						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
+  						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
+
+  						this.hide(); //Hide the search group dialog after sucessful save
+  						YAHOO.util.Dom.get('add_search_group_form').reset(); //Prepare for future use
+  						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible'); //Set to display on tab change, but if first tab this would be missing
+  					} else {
+  						alert('Unable to add new Search Group!  Please try again.');
+  					}
+					});
 				}
 			};
 			
@@ -324,7 +327,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			
 			var handleCancel = function () {
 				//Restore current setting from stored prefs in cause they changed, but did not save
-				YAHOO.AIR.Sideline.slider.setValue((that.searchRefreshRate / 6) * 20, false);
+				YAHOO.TI.Sideline.slider.setValue((that.searchRefreshRate / 6) * 20, false);
 				this.cancel();
 			};
 		
@@ -460,18 +463,19 @@ YAHOO.util.Event.onDOMReady(function () {
 				tabText   = activeTab[0].innerHTML;
 			
 				if (tabText !== 'Favorites') {
-					var grpId        = that.getCurrentGrpId(),
-						tabId        = 'summary-group-' + grpId,
-						tabContainer = YAHOO.util.Dom.get(tabId);
-					if (grpId !== 'undefined') {
-						//Remove tab data (i.e.) the search queries, results, and group
-						that.removeTabData(grpId);
-						
-						//Remove event listeners and references to this tab and then physically remove it
-						YAHOO.util.Event.purgeElement(tabContainer, true);
-						that.tabStore[grpId].nodeReference = null;
-						that.tabView.removeTab(that.tabView.get('activeTab'));
-					}
+				  that.getCurrentGrpId(function(grpId) {
+				    var tabId        = 'summary-group-' + grpId,
+  						tabContainer = YAHOO.util.Dom.get(tabId);
+  					if (grpId !== 'undefined') {
+  						//Remove tab data (i.e.) the search queries, results, and group
+  						that.removeTabData(grpId);
+
+  						//Remove event listeners and references to this tab and then physically remove it
+  						YAHOO.util.Event.purgeElement(tabContainer, true);
+  						that.tabStore[grpId].nodeReference = null;
+  						that.tabView.removeTab(that.tabView.get('activeTab'));
+  					}
+				  });
 				} else {
 					alert('The favorites group cannot be removed!');
 				}
@@ -505,139 +509,139 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Used to handle tab construction during initial app load
 		 */
 		setupSidelineTabs : function () {
-			var that = this,
-				sidelineGroups = this.getAllSidelineGroups(); //We'll always have at least 2 grps (ie) Favorites & Trends
-			
-			//The trends group is not in the database so it is added seperately here
-			this.tabView.addTab(new YAHOO.widget.Tab({ 
-													label: this.buildTabText("Trends"),
-													active: false,
-													content: '<div id="trending_content" class="tweet-container">' +
-																'<p>Popular topics right now</p>' +
-																'<div id="twitter_trend_list"><p>Loading trends...<img src="images/search_in_progress.gif" alt="loading" /></p></div>' +
-																'<p id="twitter_trend_asof"></p>' +
-															'</div>'
-												})
-											);
-		
-			//We need to open a tab for each group
-			for (var i = 0; i < sidelineGroups.data.length; i++) {				
-				//Collect tweets for this group and build tweet rows for this tab if we have data
-				var tweetStr       = '',
-					tweetStrParts  = [],
-					tabLabel	   = '',
-					grpTweets      = this.getTweets(sidelineGroups.data[i].id);				
-				
-				tweetStrParts[tweetStrParts.length] = '<div id="summary-group-' + sidelineGroups.data[i].id + '" class="tweet-container summary-group-' + sidelineGroups.data[i].id + '">';
-				if (grpTweets.data !== null) {
-					var c = 0, j, numTweets = grpTweets.data.length;
-					for (j = 0; j < numTweets; j++) {
-						var buttonClass, buttonTask, buttonTitle;
-						
-						//Determine fav image and task (ie) remove + delete icon for those in the Favorites group and fav + star icon for all others
-						if (sidelineGroups.data[i].group_name === 'Favorites') {
-							buttonClass = 'delete_button';
-							buttonTask  = 'remove';
-							buttonTitle = 'Remove this Tweet';
-						} else {
-							buttonClass = 'fav_button';
-							buttonTask = 'fav';
-							buttonTitle = 'Favorite this Tweet';
-						}
-						
-						//Available fields: text,to_user_id,from_user,twitter_id,from_user_id,profile_image_url,created_at
-						tweetStrParts[tweetStrParts.length] = '<div class="single-tweet search-term-' + grpTweets.data[j].searches_id + ' detail-group-' + sidelineGroups.data[i].id + '" id="tweet__' + grpTweets.data[j].id + '__' + grpTweets.data[j].twitter_id + '">';
-						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-left">';
-						tweetStrParts[tweetStrParts.length] = 		'<img height="48" width="48" class="profile_image" src="' + grpTweets.data[j].profile_image_url + '" alt="' + grpTweets.data[j].from_user + '" />';
-						tweetStrParts[tweetStrParts.length] = 	'</div>';
-						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-center">';
-						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet_text" id="db_' + grpTweets.data[j].id + '">';
-						tweetStrParts[tweetStrParts.length] = 			'<a title="open in browser" style="text-decoration: underline;" class="tweet_link" href="http://twitter.com/' + encodeURIComponent(grpTweets.data[j].from_user) + '">' + grpTweets.data[j].from_user + '</a>&nbsp;' + grpTweets.data[j].text;
-						tweetStrParts[tweetStrParts.length] = 		'</p>';
-						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet-date">' + grpTweets.data[j].created_at + '</p>';
-						tweetStrParts[tweetStrParts.length] = 	'</div>';
-						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-right">';
-						tweetStrParts[tweetStrParts.length] =		'<span title="' + buttonTitle + '" class="fav_reply_remove ' + buttonClass + '" id="' + buttonTask + '__' + grpTweets.data[j].twitter_id + '__' + grpTweets.data[j].from_user + '"></span>';
-						tweetStrParts[tweetStrParts.length] = 		'<span title="Reply to Tweet" class="fav_reply_remove reply_button" id="reply__' + grpTweets.data[j].twitter_id + '__' + grpTweets.data[j].from_user + '"></span>';
-						tweetStrParts[tweetStrParts.length] = 	'</div>';
-						tweetStrParts[tweetStrParts.length] = 	'<br class="clear" />'; //break inside node so it fades with node
-						tweetStrParts[tweetStrParts.length] = '</div>';
-					}
-				} else {
-					tweetStrParts[tweetStrParts.length] = '<p id="emptygroup__' + sidelineGroups.data[i].id + '">This group has no search results yet!</p>';
-				}
-				
-				//Close it up
-				tweetStrParts[tweetStrParts.length] = '</div>';
-				//Pull it all back together
-				tweetStr = tweetStrParts.join("");
-				
-				//Add a new tab per group
-				tabLabel = this.buildTabText(sidelineGroups.data[i].group_name);
-			  this.tabView.addTab(new YAHOO.widget.Tab({
-			    label: tabLabel,
-			    content: tweetStr,
-			    active: false
-			  }));
-				
-				this.tabView.appendTo('tweetainer'); //Inject new tab
-			}
-			
-			this.refreshTabStore();
-			this.setupNewTabButton();
-			
-			//Update active search list with ones for the newly selected tab
-			this.tabView.addListener('activeTabChange', function (e) {
-				var grpId = that.getCurrentGrpId();
-				
-				if (grpId !== 'undefined') {
-					var grpQueryStrings = that.getSidelineGroupQueries(grpId) || 'undefined',
-						searchStringList = YAHOO.util.Dom.get("active_search_strings");
-						
-					//If selected tab is favs then hide the add search button.  Otherwise, update search list.
-					if (grpId === that.tabStore.favoritesGrpID) {
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "inactive", "active");
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "active", "inactive");
-						
-						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'hidden');
-						searchStringList.innerHTML = '<li class="list_message">The Favorites group does not contain specific search items.' +
-														' Instead it contains a collection of your favorite search results.</li>';
-						
-						//No search result totals for favs							
-						YAHOO.util.Dom.get("search_group_result_count").innerHTML = '';
-					} else if (grpId === that.tabStore.trendsGrpID) {
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "inactive", "active");
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "active", "inactive");
-						
-						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'hidden');
-						searchStringList.innerHTML = '<li class="list_message">The Trends group does not contain specific search items.' +
-														' Instead it contains a collection of topics currently trending in Twitter.</li>';
-						
-						//No search result totals for trends								
-						YAHOO.util.Dom.get("search_group_result_count").innerHTML = '';
-					} else {
-						//Make sure both special tabs are marked inactive
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "active", "inactive");
-						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "active", "inactive");
-						
-						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible');
+			var that = this;
+		  this.getAllSidelineGroups(function(sidelineGroups) {
+		    //The trends group is not in the database so it is added seperately here
+  			that.tabView.addTab(new YAHOO.widget.Tab({ 
+  			  label: that.buildTabText("Trends"),
+  				active: false,
+  				content: '<div id="trending_content" class="tweet-container">' +
+  									'<p>Popular topics right now</p>' +
+  									'<div id="twitter_trend_list"><p>Loading trends...<img src="images/search_in_progress.gif" alt="loading" /></p></div>' +
+  									'<p id="twitter_trend_asof"></p>' +
+  									'</div>'
+  			}));
 
-						if (grpQueryStrings !== 'undefined') {
-							that.updateActiveSearchList(grpQueryStrings);
-						}
-						 
-						//Update selected tab label and tabStore to remove new record info and update the total reference
-						that.tabStore[grpId].newTweetCount = 0;
-						that.tabStore[grpId].nodeReference.innerHTML = that.buildTabText(that.tabStore[grpId].label, 0);
-						
-						//Update the active search group total for the selected tab
-						YAHOO.util.Dom.get("search_group_result_count").innerHTML = 'Search Group Total: ' + that.tabStore[grpId].totalTweetCount;
-					}
-				}
+  			//We need to open a tab for each group
+  			for (var i = 0; i < sidelineGroups.rows.length; i++) {		
+  			  var sidelineGroup = sidelineGroups.rows.item(i);		
+  			  that.getTweets(sidelineGroup.id, function(grpTweets) {
+  			    //Collect tweets for this group and build tweet rows for this tab if we have data
+    				var tweetStr       = '',
+    					tweetStrParts  = [],
+    					tabLabel	   = '';				
+    				tweetStrParts[tweetStrParts.length] = '<div id="summary-group-' + sidelineGroup.id + '" class="tweet-container summary-group-' + sidelineGroup.id + '">';
+    				if (grpTweets.rows !== null) {
+    					var c = 0, j, numTweets = grpTweets.rows.length;
+    					for (j = 0; j < numTweets; j++) {
+    						var buttonClass, buttonTask, buttonTitle;
+    						//Determine fav image and task (ie) remove + delete icon for those in the Favorites group and fav + star icon for all others
+    						if (sidelineGroup.group_name === 'Favorites') {
+    							buttonClass = 'delete_button';
+    							buttonTask  = 'remove';
+    							buttonTitle = 'Remove this Tweet';
+    						} else {
+    							buttonClass = 'fav_button';
+    							buttonTask = 'fav';
+    							buttonTitle = 'Favorite this Tweet';
+    						}
 
-			});
-			
-			this.tabView.set('activeIndex', 0);  //Make tab at index 0 active (ie) Trends
+    						//Available fields: text,to_user_id,from_user,twitter_id,from_user_id,profile_image_url,created_at
+    						tweetStrParts[tweetStrParts.length] = '<div class="single-tweet search-term-' + grpTweets.rows.item(j).searches_id + ' detail-group-' + sidelineGroup.id + '" id="tweet__' + grpTweets.rows.item(j).id + '__' + grpTweets.rows.item(j).twitter_id + '">';
+    						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-left">';
+    						tweetStrParts[tweetStrParts.length] = 		'<img height="48" width="48" class="profile_image" src="' + grpTweets.rows.item(j).profile_image_url + '" alt="' + grpTweets.rows.item(j).from_user + '" />';
+    						tweetStrParts[tweetStrParts.length] = 	'</div>';
+    						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-center">';
+    						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet_text" id="db_' + grpTweets.rows.item(j).id + '">';
+    						tweetStrParts[tweetStrParts.length] = 			'<a title="open in browser" style="text-decoration: underline;" class="tweet_link" href="http://twitter.com/' + encodeURIComponent(grpTweets.rows.item(j).from_user) + '">' + grpTweets.rows.item(j).from_user + '</a>&nbsp;' + grpTweets.rows.item(j).text;
+    						tweetStrParts[tweetStrParts.length] = 		'</p>';
+    						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet-date">' + grpTweets.rows.item(j).created_at + '</p>';
+    						tweetStrParts[tweetStrParts.length] = 	'</div>';
+    						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-right">';
+    						tweetStrParts[tweetStrParts.length] =		'<span title="' + buttonTitle + '" class="fav_reply_remove ' + buttonClass + '" id="' + buttonTask + '__' + grpTweets.rows.item(j).twitter_id + '__' + grpTweets.rows.item(j).from_user + '"></span>';
+    						tweetStrParts[tweetStrParts.length] = 		'<span title="Reply to Tweet" class="fav_reply_remove reply_button" id="reply__' + grpTweets.rows.item(j).twitter_id + '__' + grpTweets.rows.item(j).from_user + '"></span>';
+    						tweetStrParts[tweetStrParts.length] = 	'</div>';
+    						tweetStrParts[tweetStrParts.length] = 	'<br class="clear" />'; //break inside node so it fades with node
+    						tweetStrParts[tweetStrParts.length] = '</div>';
+    					}
+    				} else {
+    					tweetStrParts[tweetStrParts.length] = '<p id="emptygroup__' + sidelineGroup.id + '">This group has no search results yet!</p>';
+    				}
+
+    				//Close it up
+    				tweetStrParts[tweetStrParts.length] = '</div>';
+    				//Pull it all back together
+    				tweetStr = tweetStrParts.join("");
+
+    				//Add a new tab per group
+    				tabLabel = that.buildTabText(sidelineGroup.group_name);
+    			    that.tabView.addTab(new YAHOO.widget.Tab({
+    			        label: tabLabel,
+    			        content: tweetStr,
+    			        active: false
+    			    }));
+
+    				that.tabView.appendTo('tweetainer'); //Inject new tab
+  			  });
+  			}
+        
+  			that.refreshTabStore();
+  			that.setupNewTabButton();
+
+  			//Update active search list with ones for the newly selected tab
+  			that.tabView.addListener('activeTabChange', function (e) {
+  				that.getCurrentGrpId(function(grpId) {
+  				  that.getSidelineGroupQueries(grpId,function(grpQueryStrings) {
+              grpQueryStrings = grpQueryStrings || 'undefined';
+              if (grpId !== 'undefined') {
+      					var searchStringList = YAHOO.util.Dom.get("active_search_strings");
+
+      					//If selected tab is favs then hide the add search button.  Otherwise, update search list.
+      					if (grpId === that.tabStore.favoritesGrpID) {
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "inactive", "active");
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "active", "inactive");
+
+      						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'hidden');
+      						searchStringList.innerHTML = '<li class="list_message">The Favorites group does not contain specific search items.' +
+      														' Instead it contains a collection of your favorite search results.</li>';
+
+      						//No search result totals for favs							
+      						YAHOO.util.Dom.get("search_group_result_count").innerHTML = '';
+      					} else if (grpId === that.tabStore.trendsGrpID) {
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "inactive", "active");
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "active", "inactive");
+
+      						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'hidden');
+      						searchStringList.innerHTML = '<li class="list_message">The Trends group does not contain specific search items.' +
+      														' Instead it contains a collection of topics currently trending in Twitter.</li>';
+
+      						//No search result totals for trends								
+      						YAHOO.util.Dom.get("search_group_result_count").innerHTML = '';
+      					} else {
+      						//Make sure both special tabs are marked inactive
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("favs-tab-label"), "active", "inactive");
+      						YAHOO.util.Dom.replaceClass(YAHOO.util.Dom.get("trends-tab-label"), "active", "inactive");
+
+      						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible');
+
+      						if (grpQueryStrings !== 'undefined') {
+      							that.updateActiveSearchList(grpQueryStrings);
+      						}
+
+      						//Update selected tab label and tabStore to remove new record info and update the total reference
+      						that.tabStore[grpId].newTweetCount = 0;
+      						that.tabStore[grpId].nodeReference.innerHTML = that.buildTabText(that.tabStore[grpId].label, 0);
+
+      						//Update the active search group total for the selected tab
+      						YAHOO.util.Dom.get("search_group_result_count").innerHTML = 'Search Group Total: ' + that.tabStore[grpId].totalTweetCount;
+      					}
+      				}
+            });
+  				});
+  			});
+
+  			that.tabView.set('activeIndex', 0);  //Make tab at index 0 active (ie) Trends
+		  });
 		},
 		/**
 		 * Used to put an add tab button on beside the last tab.  Reset when new tabs are added.
@@ -692,23 +696,23 @@ YAHOO.util.Event.onDOMReady(function () {
 				this.restoreSearchItemDialog(search_id);
 				this.searchDialog.show();
 			} else if (eltarget.id === 'add_new_search') {
-				var grpId = this.getCurrentGrpId();
-				
-				if (grpId !== 'undefined') {
-					if (grpId === this.tabStore.favoritesGrpID || grpId === this.tabStore.trendsGrpID) {
-						alert('You cannot define search conditions for this group!');
-					} else {
-						//Disable the delete button on new additions
-						var deleteButton = YAHOO.util.Dom.get("yui-gen0");
-						YAHOO.util.Dom.addClass(deleteButton, 'yui-button-disabled');
-						YAHOO.util.Dom.get('search_to_update').value = ""; //Clear any old edits
-						
-						//Default to the simple search form
-						YAHOO.util.Dom.setStyle("advanced_search", "display", "none");
-						YAHOO.util.Dom.setStyle("simple_search", "display", "");
-						this.searchDialog.show();
-					}
-				}
+				this.getCurrentGrpId(function(grpId) {
+				  if (grpId !== 'undefined') {
+  					if (grpId === this.tabStore.favoritesGrpID || grpId === this.tabStore.trendsGrpID) {
+  						alert('You cannot define search conditions for this group!');
+  					} else {
+  						//Disable the delete button on new additions
+  						var deleteButton = YAHOO.util.Dom.get("yui-gen0");
+  						YAHOO.util.Dom.addClass(deleteButton, 'yui-button-disabled');
+  						YAHOO.util.Dom.get('search_to_update').value = ""; //Clear any old edits
+
+  						//Default to the simple search form
+  						YAHOO.util.Dom.setStyle("advanced_search", "display", "none");
+  						YAHOO.util.Dom.setStyle("simple_search", "display", "");
+  						this.searchDialog.show();
+  					}
+  				}
+				});
 			}
 		},
 		/**
@@ -928,24 +932,26 @@ YAHOO.util.Event.onDOMReady(function () {
 				
 				//Add to tabStore if new and not the dynamic trends tab
 				if (tabText !== 'Trends') {
-					grpIDResult   = this.getGroupIdFromString(tabText);
-					grpID         = Number(grpIDResult.data[0].id);
-					grpTweetCount = this.getTweetCountForSearchGroup(grpID);
-					if (YAHOO.lang.isUndefined(this.tabStore[grpID])) {
-						this.tabStore[grpID] = {
-												nodeReference: searchGrpTabs[t], 
-												label: searchGrpTabs[t].innerHTML, 
-												newTweetCount: 0,
-												totalTweetCount: grpTweetCount
-											   };	
-					}
+					this.getGroupIdFromString(tabText,function(grpIDResult) {
+					  grpID         = Number(grpIDResult.data[0].id);
+  					grpTweetCount = this.getTweetCountForSearchGroup(grpID);
+  					if (YAHOO.lang.isUndefined(this.tabStore[grpID])) {
+  						this.tabStore[grpID] = {
+  												nodeReference: searchGrpTabs[t], 
+  												label: searchGrpTabs[t].innerHTML, 
+  												newTweetCount: 0,
+  												totalTweetCount: grpTweetCount
+  											   };	
+  					}
+					});
 				}
 			}
 			
 			//The favorites and trends tabs are special (we need some extra metadata)
 			if (YAHOO.lang.isUndefined(this.tabStore.favoritesGrpID)) {
-				var favGrpIDResult = this.getGroupIdFromString('Favorites');
-				this.tabStore.favoritesGrpID = Number(favGrpIDResult.data[0].id);
+				this.getGroupIdFromString('Favorites', function(favGrpIDResult) {
+				  that.tabStore.favoritesGrpID = Number(favGrpIDResult.rows.item(0).id);
+				});
 			}
 			if (YAHOO.lang.isUndefined(this.tabStore.trendsGrpID)) {
 				this.tabStore.trendsGrpID = -1;
@@ -1014,7 +1020,7 @@ YAHOO.util.Event.onDOMReady(function () {
 						callback.call(that, jData, reference_string, group_id, searches_id);
 					} 
 					catch (e) {
-						air.trace("Unabled to parse JSON");
+						Titanium.API.debug("Unabled to parse JSON");
 					}
 		        }
 		    };
@@ -1037,7 +1043,7 @@ YAHOO.util.Event.onDOMReady(function () {
 						callback.call(that, jData);
 					}
 					catch (e) {
-						air.trace("Unabled to parse JSON");
+						Titanium.API.debug("Unabled to parse JSON");
 					}
 		        }
 		    };
@@ -1130,18 +1136,22 @@ YAHOO.util.Event.onDOMReady(function () {
 				//Keep track of the rotation total and call the system notification
 				this.rotationTotal += countOfNewTweetsAdded;
 				
-				if (group_id !== this.getCurrentGrpId()) {
-					//Update non-active tabs and tabStore with new record count
-					this.tabStore[group_id].newTweetCount += countOfNewTweetsAdded;
-					this.tabStore[group_id].nodeReference.innerHTML = this.buildTabText(this.tabStore[group_id].label, this.tabStore[group_id].newTweetCount);
-				}
-				
-				//We will not have a SGT for Trends or Favs
-				if (group_id !== this.tabStore.favoritesGrpID && group_id !== this.tabStore.trendsGrpID) {
-					try {
-						YAHOO.util.Dom.get("search_group_result_count").innerHTML = 'Search Group Total: ' + this.tabStore[this.getCurrentGrpId()].totalTweetCount;
-					} catch (e) {}
-				}
+				this.getCurrentGrpId(function(grpId) {
+				  if (group_id !== grpId) {
+  					//Update non-active tabs and tabStore with new record count
+  					this.tabStore[group_id].newTweetCount += countOfNewTweetsAdded;
+  					this.tabStore[group_id].nodeReference.innerHTML = this.buildTabText(this.tabStore[group_id].label, this.tabStore[group_id].newTweetCount);
+  				}
+
+  				//We will not have a SGT for Trends or Favs
+  				if (group_id !== this.tabStore.favoritesGrpID && group_id !== this.tabStore.trendsGrpID) {
+  				  this.getCurrentGrpId(function(grpId) {
+  				    try {
+    						YAHOO.util.Dom.get("search_group_result_count").innerHTML = 'Search Group Total: ' + this.tabStore[grpId].totalTweetCount;
+    					} catch (e) {}
+  				  });
+  				}
+				});
 			}
 			
 			//Display notification as needed
@@ -1150,10 +1160,11 @@ YAHOO.util.Event.onDOMReady(function () {
 			}
 			
 			//Update starting point for next run
-			var maxTwitterIdResult = this.getMaxTwitterIdForSearchTerm(searches_id);
-			if (!YAHOO.lang.isNull(data)) {
-				this.updateMaxTwitterIdForSearchTerm(maxTwitterIdResult.data[0].twitter_id, searches_id);
-			}
+			this.getMaxTwitterIdForSearchTerm(searches_id,function(maxTwitterIdResult) {
+			  if (!YAHOO.lang.isNull(data)) {
+  				this.updateMaxTwitterIdForSearchTerm(maxTwitterIdResult.data[0].twitter_id, searches_id);
+  			}
+			});
 		},
 		/**
 		 * Handle the tweet reply, fav, and link click actions
@@ -1275,13 +1286,13 @@ YAHOO.util.Event.onDOMReady(function () {
 				scaleFactor  = 18,  //Scale factor for converting the pixel offset into a real value
 				keyIncrement = 20;  //The amount the slider moves when the value is changed with the arrow
 	
-		    YAHOO.AIR.Sideline.slider = YAHOO.widget.Slider.getHorizSlider("slider-bg", "slider-thumb", 0, 200, 20);
-		    YAHOO.AIR.Sideline.slider.animate = true;
+		    YAHOO.TI.Sideline.slider = YAHOO.widget.Slider.getHorizSlider("slider-bg", "slider-thumb", 0, 200, 20);
+		    YAHOO.TI.Sideline.slider.animate = true;
 			
 			//Restore current setting from stored prefs and animate to proper position
-			YAHOO.AIR.Sideline.slider.setValue((this.searchRefreshRate / 6) * 20, false);
+			YAHOO.TI.Sideline.slider.setValue((this.searchRefreshRate / 6) * 20, false);
 		
-		    YAHOO.AIR.Sideline.slider.getRealValue = function() {
+		    YAHOO.TI.Sideline.slider.getRealValue = function() {
 				var rv = Math.round(this.getValue() * scaleFactor) / 60;
 				if (rv === 0) {
 					rv = 1; //1 min refresh is the minimum
@@ -1290,10 +1301,10 @@ YAHOO.util.Event.onDOMReady(function () {
 		        return rv;
 		    };
 		
-		    YAHOO.AIR.Sideline.slider.subscribe("change", function(offsetFromStart) {
+		    YAHOO.TI.Sideline.slider.subscribe("change", function(offsetFromStart) {
 		        //Use the scale factor to convert the pixel offset into a real value
 				var fld = YAHOO.util.Dom.get(convertedval),
-					actualValue = YAHOO.AIR.Sideline.slider.getRealValue();
+					actualValue = YAHOO.TI.Sideline.slider.getRealValue();
 		        
 				fld.innerHTML = actualValue;
 		
@@ -1304,7 +1315,7 @@ YAHOO.util.Event.onDOMReady(function () {
 		/**
 		 * Used to find the groupid of the active tab
 		 */
-		getCurrentGrpId : function () {
+		getCurrentGrpId : function (callback) {
 			var grpIdResult,
 				activeTab = YAHOO.util.Selector.query('li.selected a em'),
 				tabText   = this.getRawTabText(activeTab[0].innerHTML);
@@ -1312,13 +1323,14 @@ YAHOO.util.Event.onDOMReady(function () {
 			if (tabText === 'Trends') {
 				return -1; //There is no trend group in the database
 			} else {
-				grpIdResult = this.getGroupIdFromString(tabText) || 'undefined';
-			
-				if (grpIdResult === 'undefined') {
-					return 'undefined';
-				} else {
-					return grpIdResult.data[0].id;
-				}
+			  this.getGroupIdFromString(tabText, function(grpIdResult) {
+			    grpIdResult = grpIdResult || 'undefined';
+			    if (grpIdResult === 'undefined') {
+  					callback.call(this,'undefined');
+  				} else {
+  				  callback.call(this,grpIdResult.rows.item(0).id);
+  				}
+			  });
 			}
 		},
 		/**
@@ -1342,96 +1354,100 @@ YAHOO.util.Event.onDOMReady(function () {
 	/**
 	 * Sideline misc utility functions
 	 */
-	YAHOO.AIR.SidelineUtil = function () {};
-	YAHOO.AIR.SidelineUtil.prototype = {
+	YAHOO.TI.SidelineUtil = function () {};
+	YAHOO.TI.SidelineUtil.prototype = {
 		/**
 		 * Used to scan for and record new matched tweets. Scheduled via setInterval.
 		 */
 		dataRotation : function () {
+		  
 			var i,
-			  sideline = this,
-				twitterRequestUrl = 'http://search.twitter.com/search.json?',
-				sidelineGroups    = this.getAllSidelineGroups(), //Start by getting the active group (refetching in case they have changed since startup)
-				numOfGroups       = sidelineGroups.data.length;
-			
-			//Reset the rotation counters
-			this.rotationJobCount = this.getCountOfActiveQueries();
-			this.rotationTotal    = 0;
-			
-			if (numOfGroups > 0) {
-				 this.doProgressIndicator(1);
-				
-				//Identify and perform the various searches per group
-				for (i = 0; i < numOfGroups; i++) {
-					var j,
-						tmpUrl,
-						tmpQ,
-						search_string,
-						numOfGroupsQueries = 0,
-						crtGroupQueries    = this.getSidelineGroupQueries(sidelineGroups.data[i].id);	
-					
-					if (crtGroupQueries.data !== null) {
-						numOfGroupsQueries = crtGroupQueries.data.length;
-						
-						//Run a search/append for each query string
-						for (j = 0; j < numOfGroupsQueries; j++) {
-							tmpUrl = twitterRequestUrl + crtGroupQueries.data[j].actual_query_string + '&lang=en';
-							
-							if (crtGroupQueries.data[j].twitter_starting_point !== '' && crtGroupQueries.data[j].twitter_starting_point > 0) {
-								tmpUrl += '&since_id=' + crtGroupQueries.data[j].twitter_starting_point;
-							}
-							
-							//Build search string for the processNewTweets regex (it's what becomes highlighted)
-							search_string = '';
-							if (crtGroupQueries.data[j].q !== '') {
-								tmpQ = crtGroupQueries.data[j].q;
-								//Simple queries are often contained in double quotes. This is fine for the query, but they will
-								//not be in the string for regex comparsion so remove leading/trailing double quote as needed here
-								if (tmpQ.charAt(0) === '"') {
-									tmpQ = tmpQ.substr(1, tmpQ.length);
-								}
-								//Remove trailing quote if needed
-								if (tmpQ.charAt(tmpQ.length - 1) === '"') {
-									tmpQ = tmpQ.substr(0, tmpQ.length - 1);
-								}
-								
-								tmpQ = tmpQ.replace(/\+or\+/gi, "|");
-								tmpQ = tmpQ.replace(/\+/g, "|");
-								search_string += tmpQ.replace(/"\|"/g, "|");
-							}
-							if (crtGroupQueries.data[j].ands !== '') {
-								search_string += crtGroupQueries.data[j].ands.replace(/\+/ig, "|");
-							}
-							if (crtGroupQueries.data[j].ors !== '') {
-								search_string += crtGroupQueries.data[j].ors.replace(/\+/ig, "|");
-							}
-							if (crtGroupQueries.data[j].phrase !== '') {
-								search_string += crtGroupQueries.data[j].phrase.replace(/\+/ig, " ");
-							}
-							if (crtGroupQueries.data[j].tag !== '') {
-								search_string += crtGroupQueries.data[j].tag.replace(/\+/ig, " ");
-							}
-							if (crtGroupQueries.data[j].user_from !== '') {
-								search_string += crtGroupQueries.data[j].user_from.replace(/\+/ig, " ");
-							}
-							if (crtGroupQueries.data[j].user_to !== '') {
-								search_string += crtGroupQueries.data[j].user_to.replace(/\+/ig, " ");
-							}
-							if (crtGroupQueries.data[j].ref !== '') {
-								search_string += crtGroupQueries.data[j].ref.replace(/\+/ig, " ");
-							}
-							
-							try {
-								//Note: encodeURI is used over encodeURIComponent because we don't want to encode the "+" for Twitter.
-								//However, the "#" does require encoding so we handle after the initial encode.
-								this.doTwitterSearch(this.processNewTweets, encodeURI(tmpUrl).replace(/#/g, '%23'), search_string, sidelineGroups.data[i].id, crtGroupQueries.data[j].id);
-							} catch(e) {}
-						}
-					}
-				}
-				
-				this.doProgressIndicator(0);
-			}
+			  that = this,
+				twitterRequestUrl = 'http://search.twitter.com/search.json?';
+			this.getAllSidelineGroups(function(sidelineGroups) {
+			  var numOfGroups = sidelineGroups.rows.length;
+
+  			//Reset the rotation counters
+  			that.getCountOfActiveQueries(function(rotationJobCount) {
+  			  that.rotationTotal    = 0;
+
+    			if (numOfGroups > 0) {
+    				 that.doProgressIndicator(1);
+
+    				//Identify and perform the various searches per group
+    				for (i = 0; i < numOfGroups; i++) {
+    				  that.getSidelineGroupQueries(sidelineGroups.rows.item(i).id,function(crtGroupQueries) {
+    				    var j,
+      						tmpUrl,
+      						tmpQ,
+      						search_string,
+      						numOfGroupsQueries = 0;	
+
+      					if (crtGroupQueries.rows !== null) {
+      						numOfGroupsQueries = crtGroupQueries.rows.length;
+
+      						//Run a search/append for each query string
+      						for (j = 0; j < numOfGroupsQueries; j++) {
+      							tmpUrl = twitterRequestUrl + crtGroupQueries.rows.item(j).actual_query_string + '&lang=en';
+
+      							if (crtGroupQueries.rows.item(j).twitter_starting_point !== '' && crtGroupQueries.rows.item(j).twitter_starting_point > 0) {
+      								tmpUrl += '&since_id=' + crtGroupQueries.rows.item(j).twitter_starting_point;
+      							}
+
+      							//Build search string for the processNewTweets regex (it's what becomes highlighted)
+      							search_string = '';
+      							if (crtGroupQueries.rows.item(j).q !== '') {
+      								tmpQ = crtGroupQueries.rows.item(j).q;
+      								//Simple queries are often contained in double quotes. This is fine for the query, but they will
+      								//not be in the string for regex comparsion so remove leading/trailing double quote as needed here
+      								if (tmpQ.charAt(0) === '"') {
+      									tmpQ = tmpQ.substr(1, tmpQ.length);
+      								}
+      								//Remove trailing quote if needed
+      								if (tmpQ.charAt(tmpQ.length - 1) === '"') {
+      									tmpQ = tmpQ.substr(0, tmpQ.length - 1);
+      								}
+
+      								tmpQ = tmpQ.replace(/\+or\+/gi, "|");
+      								tmpQ = tmpQ.replace(/\+/g, "|");
+      								search_string += tmpQ.replace(/"\|"/g, "|");
+      							}
+      							if (crtGroupQueries.rows.item(j).ands !== '') {
+      								search_string += crtGroupQueries.rows.item(j).ands.replace(/\+/ig, "|");
+      							}
+      							if (crtGroupQueries.rows.item(j).ors !== '') {
+      								search_string += crtGroupQueries.rows.item(j).ors.replace(/\+/ig, "|");
+      							}
+      							if (crtGroupQueries.rows.item(j).phrase !== '') {
+      								search_string += crtGroupQueries.rows.item(j).phrase.replace(/\+/ig, " ");
+      							}
+      							if (crtGroupQueries.rows.item(j).tag !== '') {
+      								search_string += crtGroupQueries.rows.item(j).tag.replace(/\+/ig, " ");
+      							}
+      							if (crtGroupQueries.rows.item(j).user_from !== '') {
+      								search_string += crtGroupQueries.rows.item(j).user_from.replace(/\+/ig, " ");
+      							}
+      							if (crtGroupQueries.rows.item(j).user_to !== '') {
+      								search_string += crtGroupQueries.rows.item(j).user_to.replace(/\+/ig, " ");
+      							}
+      							if (crtGroupQueries.rows.item(j).ref !== '') {
+      								search_string += crtGroupQueries.rows.item(j).ref.replace(/\+/ig, " ");
+      							}
+
+      							try {
+      								//Note: encodeURI is used over encodeURIComponent because we don't want to encode the "+" for Twitter.
+      								//However, the "#" does require encoding so we handle after the initial encode.
+      								that.doTwitterSearch(this.processNewTweets, encodeURI(tmpUrl).replace(/#/g, '%23'), search_string, sidelineGroups.rows.item(i).id, crtGroupQueries.rows.item(j).id);
+      							} catch(e) {}
+      						}
+      					}
+    				  });
+    				}
+
+    				that.doProgressIndicator(0);
+    			}
+  			});
+			});
 		},
 		/**
 		 * Used to fetch Twitters currently trending topic list 
@@ -1557,12 +1573,11 @@ YAHOO.util.Event.onDOMReady(function () {
 					//New group was created so add the tab and make it active
 					tabLabel = this.buildTabText(trendTitle);
 					this.tabView.addTab(new YAHOO.widget.Tab({ 
-													label: tabLabel,
-													active: false,
-													content: '<div id="summary-group-' + trendGrpIDResult.data[0].id + '" class="tweet-container summary-group-' + trendGrpIDResult.data[0].id + '">' +
-																'<p id="emptygroup__' + trendGrpIDResult.data[0].id + '">This group has no search results yet!</p><div>'
-												})
-											);
+					  label: tabLabel,
+						active: false,
+						content: '<div id="summary-group-' + trendGrpIDResult.data[0].id + '" class="tweet-container summary-group-' + trendGrpIDResult.data[0].id + '">' +
+										'<p id="emptygroup__' + trendGrpIDResult.data[0].id + '">This group has no search results yet!</p><div>'
+					}));
 											
 					//Cache the new tab details, update click handlers, and set active tab to the newly added tab
 					this.remove(YAHOO.util.Dom.get("add_new_group"));
@@ -1625,6 +1640,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Used to create system notifications displayed when new search results are found
 		 */
 		displaySearchResultNotification : function() {
+		  alert('Replace me with a real notification!');
+		  /*
 			var that    = this,
 				options = new air.NativeWindowInitOptions();
 				
@@ -1676,26 +1693,7 @@ YAHOO.util.Event.onDOMReady(function () {
 					that.desktopNotificationLoader = null;
 				} catch(e) {}
 			});
-		},
-		/**
-		 * AIR process to check for and handle application updates
-		 */
-		doSidelineUpdateCheck : function() {
-			//Instantiate an updater object and set the URL for the update.xml file
-			var appUpdater = new runtime.air.update.ApplicationUpdaterUI();
-			appUpdater.updateURL = "http://sideline.yahoo.com/updater/update.xml";
-			
-			appUpdater.addEventListener(runtime.air.update.events.UpdateEvent.INITIALIZED, function () {
-		    	appUpdater.checkNow();
-			});
-			appUpdater.addEventListener(runtime.flash.events.ErrorEvent.ERROR, function () {
-				alert(event);
-			});
-			
-			appUpdater.isCheckForUpdateVisible = false;
-			appUpdater.isFileUpdateVisible     = false;
-			appUpdater.isInstallUpdateVisible  = false;
-			appUpdater.initialize();
+			*/
 		},	
 		/**
 		 * Data rotation progress indicator
@@ -1713,25 +1711,17 @@ YAHOO.util.Event.onDOMReady(function () {
 		},
 		/**
 		 * Used open links in the default browser
-		 * http://livedocs.adobe.com/labs/air/1/jslr/flash/net/navigateToURL.html
 		 * @param {Object} url
 		 */
 		openInBrowser : function (url) {
-			var variables, request;
-            variables = new air.URLVariables();
-            request   = new air.URLRequest(url);
-            //request.data = variables;
-            try {            
-                air.navigateToURL(request);
-            } catch (e) {
-                alert('Unable to open link!  Please try again.');
-            }
+			Titanium.Desktop.openURL(url);
 		},
 		/**
 		 * Used to locate and start import of a json data file of search groups and related search terms
 		 * Note: Pre-formatted json files can be used as input.  See README.markdown for information.
 		 */
 		importSearchGrps : function() {
+		  /*
 			var that = this, 
 				fileToOpen,
 				txtFilter;
@@ -1742,35 +1732,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			try {
 			    fileToOpen.browseForOpen("Open", [txtFilter]);
 			    fileToOpen.addEventListener(air.Event.SELECT, function(event) {
-					/**
-					 * Processes a pre-defined json data file of search groups and related search terms
-					 * 
-					 * Note: Below is an example of the expected json input format
-					 * {"searches" : [
-					 *       {
-					 *           "search_group_name": "Sample Query Group",
-					 *           "search_terms":
-					 *           [
-					 *               { 
-					 *                   "search_title": "Test",
-					 *                   "simple_query": "test",
-					 *                   "ands": "", 
-					 *                   "ors": "", 
-					 *                   "phrase": "", 
-					 *                   "tag": "", 
-					 *                   "user_from": "", 
-					 *                   "user_to": "", 
-					 *                   "ref": "", 
-					 *                   "positive_attitude": "false",  
-					 *                   "negative_attitude": "false", 
-					 *                   "ask_question": "false" 
-					 *               },
-					 *               ...
-					 *           ]
-					 *       }
-					 *   ]
-					 * }
-					 */
+					
 					var stream, 
 						fileData,
 						grpsData;
@@ -1875,8 +1837,9 @@ YAHOO.util.Event.onDOMReady(function () {
 					}
 				});
 			} catch (error) {
-			    air.trace("Failed:", error.message);
-			}			
+			    Titanium.API.debug("Failed:", error.message);
+			}		
+			*/	
 		},
 		/**
 		 * Used to strip html tags from a given string
@@ -1920,36 +1883,64 @@ YAHOO.util.Event.onDOMReady(function () {
 	/**
 	 * Sideline database functionality
 	 */
-	YAHOO.AIR.SidelineDB = function () {};
-	YAHOO.AIR.SidelineDB.prototype = {
-		db : null,
-		dbFile : null,
-		/**
-		 * Executes a SQL statement against the database and return the results
-		 * @param {Object} sql
-		 */
-		doQuery : function (sql, sqlParameters) {
-			var stmt           = new air.SQLStatement();
-			stmt.sqlConnection = this.db;
-			stmt.text          = sql;
-			
-			if (YAHOO.lang.isObject(sqlParameters) && sqlParameters[0] !== 'undefined') {
-	            for (var i = 0; i < sqlParameters.length; i++) {
-					stmt.parameters[i] = sqlParameters[i];
-				}
-			}
-	        
-			try {
-				stmt.execute();
-			} catch (error) {
-				air.trace("Error executing SQL:", error);
-				air.trace(error.message);
-				air.trace(stmt.text);
-				return;
-			}
-			
-			return stmt.getResult();
-		},
+	YAHOO.TI.SidelineDB = function () {};
+	YAHOO.TI.SidelineDB.prototype = {
+		db: null,
+	  doQuery: function(sql,sqlParameters,success,error) {
+	    //Provide defaults if needed 
+		  if (typeof sql === 'undefined') {
+		    throw "SQL Query string is required, dummy.";
+		  }
+		  if (typeof sqlParameters === 'undefined') {
+		    sqlParameters = [];
+		  }
+		  if (typeof success === 'undefined') {
+		    success = function(tx,result) {};
+		  }
+		  if (typeof error === 'undefined') {
+		    error = function(tx,error) {
+		      Titanium.API.debug(error+": "+error.message);
+		      window.console.log("Error doing query: "+sql);
+		      window.console.log(error+": "+error.message);
+		    };
+		  }
+		  
+		  //Execute the SQL and call the callbacks
+			this.db.transaction(function(tx) {
+	      tx.executeSql(sql,sqlParameters,success,error);
+	    });
+	  },
+	  initDb: function(callback) {
+	    var sideline = this;
+	    var sql = {
+  		  createSearchGroups: "CREATE TABLE IF NOT EXISTS search_groups(id INTEGER PRIMARY KEY NOT NULL, group_name TEXT NOT NULL,active TEXT NOT NULL DEFAULT 'Y');",
+  	    createSearches: "CREATE TABLE IF NOT EXISTS searches(id INTEGER PRIMARY KEY NOT NULL, group_id INTEGER NOT NULL, search_title TEXT NOT NULL,actual_query_string TEXT,q TEXT,ands TEXT,ors TEXT,nots TEXT,phrase TEXT,tag TEXT,user_from TEXT,user_to TEXT,ref TEXT,pa TEXT,na TEXT,aq TEXT,twitter_starting_point INTEGER,active TEXT DEFAULT 'Y');",
+        createTweets: "CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY NOT NULL,text TEXT,to_user_id INTEGER,from_user TEXT,twitter_id INTEGER,from_user_id INTEGER,profile_image_url TEXT,created_at TEXT,searches_id INTEGER,sideline_group_id INTEGER,loaded_at DATETIME DEFAULT CURRENT_TIMESTAMP);",
+        createUserPreferences: "CREATE TABLE IF NOT EXISTS user_preferences(show_desktop_notifications INTEGER NOT NULL DEFAULT 1, refresh_rate INTEGER NOT NULL DEFAULT 1);",
+        selectAllSearchGroups: "SELECT * FROM search_groups",
+        insertGroup: "INSERT INTO search_groups(id,group_name,active) VALUES (1,'Favorites', 'Y');"
+  		};
+	    //begin the daisy chain of table create statments and initialization... grr...
+  		sideline.doQuery(sql.createSearchGroups,[],function(tx,result){
+  		  sideline.doQuery(sql.createSearches,[],function(tx,result){
+          sideline.doQuery(sql.createTweets,[],function(tx,result){
+            sideline.doQuery(sql.createUserPreferences,[],function(tx,result){
+              sideline.doQuery(sql.selectAllSearchGroups,[],function(tx,result) {
+                //Insert initial "Favorites" group is need be
+                if (result.rows.length > 0) {
+                  callback.call(sideline);
+                }
+                else {
+                  sideline.doQuery(sql.insertGroup,[],function(tx,result){
+                    callback.call(sideline);
+              		});
+                }
+              });
+        		});
+      		});
+    		});
+  		});
+	  },
 		/**
 		 * Remove all non-fav tweets older than 3 hours
 		 */
@@ -1963,73 +1954,71 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Adds new search group
 		 * @param {Object} group_name
 		 */
-		addNewSearchGroup : function (group_name) {
+		addNewSearchGroup : function (group_name,callback) {
 			var lastId,
 				sqlParameters = [ group_name ],
 				insertSQL     = "INSERT INTO search_groups VALUES (NULL, ?, 'Y')";
 				
-			this.doQuery(insertSQL, sqlParameters);
-			lastId = this.doQuery("SELECT last_insert_rowid() as id");
-				
-			return lastId;
+			this.doQuery(insertSQL, sqlParameters,function(tx,result) {
+			  this.doQuery("SELECT last_insert_rowid() as id",[],function(tx,result2) {
+			    callback.call(this,result2);
+			  });
+			});
 		},
 		/**
 		 * Updates an existing search group
 		 * @param {Object} group_name
 		 */
-		updateSearchGroup : function (old_group_name, new_group_name) {
-			var searchGrpResult = this.getGroupIdFromString(old_group_name),
-				searchGrpId     = searchGrpResult.data[0].id,
-				sqlParameters   = [],
-				updateSQL       = "UPDATE search_groups SET group_name = ? WHERE id = ?";
-				
-				sqlParameters[sqlParameters.length] = new_group_name;
+		updateSearchGroup : function (old_group_name, new_group_name,callback) {
+		  this.getGroupIdFromString(old_group_name,function(searchGrpResult) {
+		    var searchGrpId = searchGrpResult.rows.item(0).id;
+		    var sqlParameters = [];
+		    var updateSQL = "UPDATE search_groups SET group_name = ? WHERE id = ?";
+		    sqlParameters[sqlParameters.length] = new_group_name;
 				sqlParameters[sqlParameters.length] = searchGrpId;
-				
-			this.doQuery(updateSQL, sqlParameters);
-			
-			return searchGrpId;
+				this.doQuery(updateSQL, sqlParameters, function(tx,result) {
+				  callback.call(this,searchGrpId);
+				});
+		  });
 		},
 		/**
 		 * Returns all tweets for passed groups
 		 * @param {Object} sideline_group_id
 		 */
-		getTweets : function (sideline_group_id) {
+		getTweets : function (sideline_group_id,callback) {
 			var sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT id, text, from_user, twitter_id, profile_image_url, created_at, sideline_group_id, searches_id FROM tweets" +
 						        " WHERE sideline_group_id = ?" +
 						        " ORDER BY twitter_id DESC",
-				tweetResults  = this.doQuery(selectSQL, sqlParameters);
-				
-			return tweetResults;
+			this.doQuery(selectSQL, sqlParameters,function(tx,result) {
+			  callback.call(this,result);
+			});
 		},
 		/**
 		 * Returns count of tweets/search results for passed search group
 		 * @param {Object} sideline_group_id
 		 */
-		getTweetCountForSearchGroup : function (sideline_group_id) {
+		getTweetCountForSearchGroup : function (sideline_group_id,callback) {
 			var tweetCount    = 0,
 				sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT count(id) AS tweet_count FROM tweets" +
 						        " WHERE sideline_group_id = ?",
-				tweetResults  = this.doQuery(selectSQL, sqlParameters);
-				
-				if (tweetResults !== null && tweetResults.data.length === 1) {
-					tweetCount = Number(tweetResults.data[0].tweet_count);
+			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
+			  if (result !== null && result.rows.length === 1) {
+					callback.call(this,Number(result.rows.item(0).tweet_count));
 				}
-				
-			return tweetCount;
+			});
 		},
 		/**
 		 * Returns search parameters for a previously created search condition
 		 */
-		getSearchItemParams : function(search_id) {
+		getSearchItemParams : function(search_id,callback) {
 			var sqlParameters = [ Number(search_id) ],
 				selectSQL = "SELECT id, group_id, search_title, q, ands, ors, nots, phrase, tag, user_from, user_to, ref, pa, na, aq" +
 			 				" FROM searches WHERE id = ?",
-				searchParamResult = this.doQuery(selectSQL, sqlParameters);
-				
-			return searchParamResult;
+			this.doQuery(selectSQL, sqlParameters,function(tx,result) {
+			  callback.call(this,result);
+			});
 		},
 		/**
 		 * Moves tweet into the Sideline favorites group
@@ -2045,12 +2034,11 @@ YAHOO.util.Event.onDOMReady(function () {
 		/**
 		 * Retrieves user preferences
 		 */
-		getUserPreferences : function () {
-			var userPreferencesData,
-				selectSQL = "SELECT show_desktop_notifications, refresh_rate FROM user_preferences";
-			
-			userPreferencesData = this.doQuery(selectSQL);
-			return userPreferencesData;
+		getUserPreferences : function (callback) {
+			var selectSQL = "SELECT show_desktop_notifications, refresh_rate FROM user_preferences";
+			this.doQuery(selectSQL,[],function(tx,result) {
+			  callback.call(this,result);
+			});
 		},
 		/**
 		 * Updates user preferences
@@ -2078,9 +2066,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * @param {Object} group_id
 		 * @param {Object} searches_id
 		 */
-		addTweet : function (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id) {
-			var lastId,
-				sqlParameters = [],
+		addTweet : function (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id, callback) {
+			var sqlParameters = [],
 				insertSQL     = "INSERT INTO tweets (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, sideline_group_id, searches_id)" +
 		    					" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 								
@@ -2094,10 +2081,11 @@ YAHOO.util.Event.onDOMReady(function () {
 				sqlParameters[sqlParameters.length] = Number(group_id);
 				sqlParameters[sqlParameters.length] = Number(searches_id);
 		
-			this.doQuery(insertSQL, sqlParameters);
-			lastId = this.doQuery("SELECT last_insert_rowid() as id");
-			
-			return lastId;
+			this.doQuery(insertSQL, sqlParameters,function(tx,result) {
+			  this.doQuery("SELECT last_insert_rowid() as id",[],function(tx,result) {
+			    callback.call(this,result);
+			  });
+			});
 		},
 		/**
 		 * Removes a single tweet record from the database
@@ -2118,8 +2106,7 @@ YAHOO.util.Event.onDOMReady(function () {
 				deleteSearchQueriesSQL = "DELETE FROM searches WHERE group_id = ?",
 				deleteSearchResultsSQL = "DELETE FROM tweets WHERE sideline_group_id = ?",
 				deleteSearchGroupSQL   = "DELETE FROM search_groups WHERE id = ?";
-	        
-	        this.doQuery(deleteSearchQueriesSQL, sqlParameters);
+	    this.doQuery(deleteSearchQueriesSQL, sqlParameters);
 			this.doQuery(deleteSearchResultsSQL, sqlParameters);
 			this.doQuery(deleteSearchGroupSQL, sqlParameters);
 		},
@@ -2127,61 +2114,49 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Returns group_id of the passed group string
 		 * @param {Object} group_string
 		 */
-		getGroupIdFromString : function (group_string) {
+		getGroupIdFromString : function (group_string,callback) {
 			var sqlParameters = [ group_string ],
 				selectSQL     = "SELECT id FROM search_groups WHERE group_name = ?",
-				grpId         = this.doQuery(selectSQL, sqlParameters);
-				
-			return grpId;	
-		},
-		/**
-		 * Returns group name of the passed group id
-		 * @param {Object} group_id
-		 */
-		getGroupStringFromId : function (group_id) {
-			var sqlParameters = [ group_id ],
-				selectSQL     = "SELECT group_name FROM search_groups WHERE id = ?",
-				grpString     = this.doQuery(selectSQL, sqlParameters);
-				
-			return grpString;
+			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
+			  callback.call(this,result);
+			});	
 		},
 		/**
 		 * Returns all search strings defined for passed group
 		 * @param {Object} sideline_group_id
 		 */
-		getSidelineGroupQueries : function (sideline_group_id) {
+		getSidelineGroupQueries : function (sideline_group_id,callback) {
 			var sqlParameters        = [ Number(sideline_group_id) ],
 				selectSQL            = "SELECT id, group_id, search_title, actual_query_string, q, ands, ors, nots, phrase, tag, user_from, user_to, ref, twitter_starting_point" +
 										" FROM searches WHERE active='Y' AND group_id = ?",
-				twitterQueryStrings  = this.doQuery(selectSQL, sqlParameters);
-				
-			return twitterQueryStrings;
+			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
+			  callback.call(this,result);
+			});
 		},
 		/**
 		 * Returns the total number of active searches
 		 */
-		getCountOfActiveQueries : function () {
-			var selectSQL                = "SELECT count(id) as total_search_count" +
+		getCountOfActiveQueries : function (callback) {
+			var selectSQL = "SELECT count(id) as total_search_count" +
 										    " FROM searches WHERE active='Y'",
-				activeSearchCount        = 0,
-				activeSearchCountResults = this.doQuery(selectSQL);
+				activeSearchCount        = 0;
 				
-				if (activeSearchCountResults !== null && activeSearchCountResults.data.length === 1) {
-					activeSearchCount = Number(activeSearchCountResults.data[0].total_search_count);
+			this.doQuery(selectSQL,[],function(tx,result) {
+			  if (result !== null && result.rows.length === 1) {
+					callback.call(this,Number(result.rows.item(0).total_search_count))
 				}
-				
-			return activeSearchCount;
+			});
 		},
 		/**
 		 * Returns the max twitter id for given search term.  Used as starting point when querying the Twitter Search API.
 		 * @param {Object} searches_id
 		 */
-		getMaxTwitterIdForSearchTerm : function (searches_id) {
+		getMaxTwitterIdForSearchTerm : function (searches_id,callback) {
 			var sqlParameters = [ Number(searches_id) ],
-				selectSQL     = "SELECT MAX(twitter_id) as twitter_id FROM tweets WHERE searches_id = ?",
-				maxTwitterId  = this.doQuery(selectSQL, sqlParameters);
-				
-			return maxTwitterId;
+				selectSQL     = "SELECT MAX(twitter_id) as twitter_id FROM tweets WHERE searches_id = ?";
+			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
+  			callback.call(this,result);
+  		});
 		},
 		/**
 		 * Updates the max twitter id for given search term.  Used as starting point when querying the Twitter Search API.
@@ -2197,25 +2172,13 @@ YAHOO.util.Event.onDOMReady(function () {
 			this.doQuery(selectSQL, sqlParameters);
 		},
 		/**
-		 * Get active search groups with search result entries
-		 */
-		getSidelineGroups : function () {
-			var selectSQL = "SELECT tg.id as id, tg.group_name as group_name FROM search_groups tg, tweets t" +
-							" WHERE tg.active='Y' AND tg.id=t.sideline_group_id" +
-							" GROUP BY tg.id" +
-							" ORDER BY group_name ASC",
-				sidelineGroups = this.doQuery(selectSQL);
-			
-			return sidelineGroups;
-		},
-		/**
 		 * Get all active search groups
 		 */
-		getAllSidelineGroups : function () {
+		getAllSidelineGroups : function (callback) {
 			var selectSQL = "SELECT id, group_name FROM search_groups WHERE active='Y' ORDER BY id ASC",
-			sidelineGroups = this.doQuery(selectSQL);
-		
-			return sidelineGroups;
+			sidelineGroups = this.doQuery(selectSQL,[],function(tx,result) {
+			  callback.call(this,result);
+			});
 		},
 		/**
 		 * Remove search query string from active group
@@ -2248,7 +2211,7 @@ YAHOO.util.Event.onDOMReady(function () {
 		 *  aq: aq
 		 * }
 		 */
-		addSearchItem : function (searchItemObject) {
+		addSearchItem : function (searchItemObject, callback) {
 			var lastId,
 				sqlParameters = [],
 				insertSQL = "INSERT INTO searches (id, group_id, search_title, actual_query_string, q, ands, ors, nots, phrase, tag, user_from, user_to, ref, pa, na, aq, twitter_starting_point, active)" + 
@@ -2270,10 +2233,11 @@ YAHOO.util.Event.onDOMReady(function () {
 			sqlParameters[sqlParameters.length]  = searchItemObject.na;
 			sqlParameters[sqlParameters.length]  = searchItemObject.aq;
 				
-			this.doQuery(insertSQL, sqlParameters);
-			lastId = this.doQuery("SELECT last_insert_rowid() as id");
-			
-			return lastId;
+			this.doQuery(insertSQL, sqlParameters, function(tx,result) {
+			  this.doQuery("SELECT last_insert_rowid() as id",[],function(tx,result) {
+			    callback.call(this,result);
+			  });
+			});
 		},
 		/**
 		 * Add search query string to active group
@@ -2298,7 +2262,7 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * 
 		 * Note: When an item is updated we reset the Twitter starting point
 		 */
-		updateSearchItem : function (searchId, searchItemObject) {
+		updateSearchItem : function (searchId, searchItemObject, callback) {
 			var sqlParameters = [],
 				updateSQL = "UPDATE searches set " +
 							"search_title = ?, actual_query_string = ?, q = ?, ands = ?, ors = ?, nots = ?, phrase = ?, " +
@@ -2321,7 +2285,9 @@ YAHOO.util.Event.onDOMReady(function () {
 			sqlParameters[sqlParameters.length]  = searchItemObject.aq;
 			sqlParameters[sqlParameters.length]  = searchId;
 				
-			this.doQuery(updateSQL, sqlParameters);
+			this.doQuery(updateSQL, sqlParameters, function(tx,result) {
+			  callback.call(this,result);
+			});
 		}
 	};
 	
@@ -2377,162 +2343,122 @@ YAHOO.util.Event.onDOMReady(function () {
 	
 	(function() {
 		
-		var chAir = new YAHOO.AIR.Sideline();
-		YAHOO.lang.augment(YAHOO.AIR.Sideline, YAHOO.AIR.SidelineDB);   //Add database functionality
-		YAHOO.lang.augment(YAHOO.AIR.Sideline, YAHOO.AIR.SidelineUtil); //Add utility support as well	
+		var sideline = new YAHOO.TI.Sideline();
+		YAHOO.lang.augment(YAHOO.TI.Sideline, YAHOO.TI.SidelineDB);   //Add database functionality
+		YAHOO.lang.augment(YAHOO.TI.Sideline, YAHOO.TI.SidelineUtil); //Add utility support as well	
 		
-		//Setup our SQLite database
-		chAir.db = new air.SQLConnection();
-		chAir.dbFile = air.File.applicationStorageDirectory.resolvePath("sideline_v1.db");
-		
-		if (!chAir.dbFile.exists) {
-			var dbTemplate = air.File.applicationDirectory.resolvePath("sideline_base.db");
-			dbTemplate.copyTo(chAir.dbFile, true);
-		}
-		
-		try {
-			chAir.db.open(chAir.dbFile);
-			chAir.db.compact(); //Vacuum/cleanup database for optimal performance
-		} catch (error) {
-			air.trace("DB error:", error.message);
-			air.trace("Details:", error.details);
-		}
-		
-		//Apply a temporary fix for Windows environments to work around an AIR font rendering issue
-		if (navigator.platform.indexOf("Win") === 0) {
-			YAHOO.util.Dom.addClass(document.body, "windowsFontFix");
-		}
-		
-		//Configure sideline per user preferences
-		var userPreferencesData = chAir.getUserPreferences();
-		if (!YAHOO.lang.isNull(userPreferencesData) && !YAHOO.lang.isNull(userPreferencesData.data)) {
-			chAir.showDesktopNotifications = userPreferencesData.data[0].show_desktop_notifications;
-			chAir.searchRefreshRate = userPreferencesData.data[0].refresh_rate;
-		} else {
-			//Defaults
-			chAir.showDesktopNotifications = 1;
-			chAir.searchRefreshRate = 1;
-		}
-		
-		//Create tabs and dialogs
-		chAir.tabView = new YAHOO.widget.TabView();
-		chAir.setupSidelineTabs();
-		chAir.setupTooltip();
-		chAir.setupRefreshRateSlider();
-		chAir.searchDialogBuilder();
-		chAir.searchGrpDialogBuilder();
-		chAir.renameSearchGrpDialogBuilder();
-		chAir.searchGrpRemovalDialog();
-		chAir.searchRateDialogBuilder();
-		
-		//Setup native window event handlers
-		window.nativeWindow.addEventListener(air.Event.CLOSING, function(event) {
-			//Stop the normal application close event and make sure to close all windows, not just the main one
-			event.preventDefault();
-			for (var i = air.NativeApplication.nativeApplication.openedWindows.length - 1; i >= 0; i--) {
-				air.NativeWindow(air.NativeApplication.nativeApplication.openedWindows[i]).close();
-			}
+		//Initialize database
+		sideline.db = openDatabase("ti_sideline","1.0", "Sideline", 200000);
+		sideline.initDb(function() {
+		  //Initialize user preferences
+		  sideline.getUserPreferences(function(prefs) {
+		    if (!YAHOO.lang.isNull(prefs) && !YAHOO.lang.isNull(prefs.rows) && prefs.rows.length > 0) {
+		      var pref = prefs.rows.item(0);
+    			sideline.showDesktopNotifications = pref.show_desktop_notifications;
+    			sideline.searchRefreshRate = pref.refresh_rate;
+    		} 
+    		else {
+    			//Defaults
+    			sideline.showDesktopNotifications = 1;
+    			sideline.searchRefreshRate = 1;
+    		}
+    		
+		    //Initialize UI
+		    sideline.tabView = new YAHOO.widget.TabView();
+    		sideline.setupSidelineTabs();
+		    sideline.setupTooltip();
+		    sideline.setupRefreshRateSlider();
+		    sideline.searchDialogBuilder();
+		    sideline.searchGrpDialogBuilder();
+    		sideline.renameSearchGrpDialogBuilder();
+    		sideline.searchGrpRemovalDialog();
+    		sideline.searchRateDialogBuilder();
+    		
+    		/**
+    		 * Perform database cleanup on startup and schedule for every 3ish hours thereafter
+    		 * Note: Tweets are cleared from the database, but not the DOM.  Will not be redrawn on next app startup. 
+    		 */
+    		sideline.dbCleanup();
+    		setInterval(function () {
+    			sideline.dbCleanup();
+    		}, 10860000);
+
+    		//Additional event handlers
+    		YAHOO.util.Event.on('active_search_container', 'click', sideline.activeSearchHandler, sideline, true);
+    		YAHOO.util.Event.on('twitter_trend_list', 'click', sideline.handleTrendEvents, sideline, true);
+    		YAHOO.util.Event.on('tweetainer', 'click', function(e) {
+    			//Presents the search group removal confirmation dialog when tab close is requested
+    			var eltarget = YAHOO.util.Event.getTarget(e);
+    			if (YAHOO.util.Dom.hasClass(eltarget, "close-search-group")) {
+    				sideline.searchGrpRemoval.show();
+    			} else if (YAHOO.util.Dom.hasClass(eltarget, "fav_reply_remove")) {
+    				//Handle the tweet reply, fav, remove click actions
+    				sideline.handleTweetReplyFavRemove(eltarget);
+    			} else if (YAHOO.util.Dom.hasClass(eltarget, 'tweet_link')) {
+    				//Handle the tweet link click actions
+    				YAHOO.util.Event.preventDefault(e);
+    				sideline.openInBrowser(eltarget.href);
+    			}
+    		});	
+    		YAHOO.util.Event.on('yui_link', 'click', function(e) {
+    			YAHOO.util.Event.preventDefault(e);
+    			var eltarget = YAHOO.util.Event.getTarget(e);
+    			sideline.openInBrowser(eltarget.href);
+    		});
+    		YAHOO.util.Event.on('manual_refresh', 'click', function() {			
+    			sideline.doIntermediateDataRotation.call(sideline);
+    		}, sideline, true);
+
+    		//Construct the options menu
+    		YAHOO.util.Event.onContentReady("options_menu", function () {
+    			//Menu item selection handler
+    			function onMenuItemClick(p_sType, p_aArgs, p_oValue){
+    				//Gather details about the selected menu entry
+    				var currentProperty = this.cfg.getProperty("checked"), itemTitle = this.value;
+
+    				if (itemTitle === 'notification') {
+    					this.cfg.setProperty("checked", !currentProperty);
+    					sideline.showDesktopNotifications = Number(!currentProperty);
+    					sideline.saveUserPreferences();
+
+    				} else if (itemTitle === 'import') {
+    					sideline.importSearchGrps(); //Run the local file import process
+    				} else if (itemTitle === 'help') {
+    					sideline.openInBrowser('http://sideline.yahoo.com/help.php');
+    				} else if (itemTitle === 'rate') {
+    					sideline.searchRateDialog.show();
+    				}
+    			}
+
+    			//Create an array of YAHOO.widget.MenuItem configuration properties
+    			var aMenuButtonMenu = [
+    				{ text: "Import Search Groups", value: "import", onclick: { fn: onMenuItemClick } },
+    	      { text: "Show Notifications", value: "notification", checked: !!sideline.showDesktopNotifications, onclick: { fn: onMenuItemClick } },
+    				{ text: "Adjust Refresh Rate", value: "rate", onclick: { fn: onMenuItemClick } },
+    				{ text: "Help", value: "help", onclick: { fn: onMenuItemClick } }
+    			];
+
+    			//Instantiate a Menu Button using the array of YAHOO.widget.MenuItem 
+    			var oMenuButton = new YAHOO.widget.Button({ type: "menu", 
+    														label: "Options", 
+    														name: "menubutton", 
+    														menu: aMenuButtonMenu, 
+    														container: this });
+    		});     
+
+    		//Run Trend fetcher on startup and schedule for every 5 mins thereafter (while the application is open that is)
+    		sideline.getTwitterTrends();
+    		setInterval(function () {
+    			sideline.getTwitterTrends();
+    		}, 300000);
+
+    		//Run Tweet fetcher on startup and schedule for future runs thereafter (while the application is open that is)
+    		sideline.dataRotation();
+    		sideline.rotationTimer = setInterval(function () {
+    			sideline.dataRotation();
+    		}, sideline.searchRefreshRate * 60000);
+    	});
 		});
-		YAHOO.util.Event.on('hd', 'mousedown', function() {
-			window.nativeWindow.startMove();
-		});
-		
-		/**
-		 * Perform database cleanup on startup and schedule for every 3ish hours thereafter
-		 * Note: Tweets are cleared from the database, but not the DOM.  Will not be redrawn on next app startup. 
-		 */
-		chAir.dbCleanup();
-		setInterval(function () {
-			chAir.dbCleanup();
-		}, 10860000);
-		
-		//Additional event handlers
-		YAHOO.util.Event.on('active_search_container', 'click', chAir.activeSearchHandler, chAir, true);
-		YAHOO.util.Event.on('twitter_trend_list', 'click', chAir.handleTrendEvents, chAir, true);
-		YAHOO.util.Event.on('tweetainer', 'click', function(e) {
-			//Presents the search group removal confirmation dialog when tab close is requested
-			var eltarget = YAHOO.util.Event.getTarget(e);
-			if (YAHOO.util.Dom.hasClass(eltarget, "close-search-group")) {
-				chAir.searchGrpRemoval.show();
-			} else if (YAHOO.util.Dom.hasClass(eltarget, "fav_reply_remove")) {
-				//Handle the tweet reply, fav, remove click actions
-				chAir.handleTweetReplyFavRemove(eltarget);
-			} else if (YAHOO.util.Dom.hasClass(eltarget, 'tweet_link')) {
-				//Handle the tweet link click actions
-				YAHOO.util.Event.preventDefault(e);
-				chAir.openInBrowser(eltarget.href);
-			}
-		});	
-		YAHOO.util.Event.on('yui_link', 'click', function(e) {
-			YAHOO.util.Event.preventDefault(e);
-			var eltarget = YAHOO.util.Event.getTarget(e);
-			chAir.openInBrowser(eltarget.href);
-		});
-		YAHOO.util.Event.on('manual_refresh', 'click', function() {			
-			chAir.doIntermediateDataRotation.call(chAir);
-		}, chAir, true);
-		
-		//Construct the options menu
-		YAHOO.util.Event.onContentReady("options_menu", function () {
-			//Menu item selection handler
-			function onMenuItemClick(p_sType, p_aArgs, p_oValue){
-				//Gather details about the selected menu entry
-				var currentProperty = this.cfg.getProperty("checked"), itemTitle = this.value;
-				
-				if (itemTitle === 'notification') {
-					this.cfg.setProperty("checked", !currentProperty);
-					chAir.showDesktopNotifications = Number(!currentProperty);
-					chAir.saveUserPreferences();
-					
-				} else if (itemTitle === 'import') {
-					chAir.importSearchGrps(); //Run the local file import process
-				} else if (itemTitle === 'help') {
-					chAir.openInBrowser('http://sideline.yahoo.com/help.php');
-				} else if (itemTitle === 'rate') {
-					chAir.searchRateDialog.show();
-				}
-			}
-		
-			//Create an array of YAHOO.widget.MenuItem configuration properties
-			var aMenuButtonMenu = [
-				{ text: "Import Search Groups", value: "import", onclick: { fn: onMenuItemClick } },
-	            { text: "Show Notifications", value: "notification", checked: !!chAir.showDesktopNotifications, onclick: { fn: onMenuItemClick } },
-				{ text: "Adjust Refresh Rate", value: "rate", onclick: { fn: onMenuItemClick } },
-				{ text: "Help", value: "help", onclick: { fn: onMenuItemClick } }
-			];
-		
-			//Instantiate a Menu Button using the array of YAHOO.widget.MenuItem 
-			var oMenuButton = new YAHOO.widget.Button({ type: "menu", 
-														label: "Options", 
-														name: "menubutton", 
-														menu: aMenuButtonMenu, 
-														container: this });
-		});     
-		
-		//Run Trend fetcher on startup and schedule for every 5 mins thereafter (while the application is open that is)
-		chAir.getTwitterTrends();
-		setInterval(function () {
-			chAir.getTwitterTrends();
-		}, 300000);
-		
-		//Run Tweet fetcher on startup and schedule for future runs thereafter (while the application is open that is)
-		chAir.dataRotation();
-		chAir.rotationTimer = setInterval(function () {
-								chAir.dataRotation();
-							}, chAir.searchRefreshRate * 60000);
-		
-		/**
-		 * Do update and healthchecks.  The healthchecks are done as a safety precaution so 
-		 * that we can put the application in maintenance mode in the event that a security issue 
-		 * is identified.  We'd take it out if we could, but our security policy prohibits this.
-		 */
-		chAir.doSidelineUpdateCheck();
-		var airApplicationVersion, appXML, xmlObject;
-    	appXML    = air.NativeApplication.nativeApplication.applicationDescriptor;
-   		xmlObject = (new DOMParser()).parseFromString(appXML, "text/xml");
-    	airApplicationVersion = xmlObject.getElementsByTagName('version')[0].firstChild.nodeValue;
-		chAir.fetchExternalJSONData(chAir.healthCheck, 'http://sideline.yahoo.com/status.php?appversion=' + airApplicationVersion);
 		
 	})();
-
 });

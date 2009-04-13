@@ -1349,6 +1349,7 @@ YAHOO.util.Event.onDOMReady(function () {
 		 */
 		dataRotation : function () {
 			var i,
+			  sideline = this,
 				twitterRequestUrl = 'http://search.twitter.com/search.json?',
 				sidelineGroups    = this.getAllSidelineGroups(), //Start by getting the active group (refetching in case they have changed since startup)
 				numOfGroups       = sidelineGroups.data.length;

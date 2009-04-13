@@ -1,19 +1,13 @@
-/**
- * Copyright (c) 2008-2009 Yahoo! Inc.  All rights reserved.  
- * The copyrights embodied in the content of this file are licensed by Yahoo! Inc. under 
- * the BSD (revised) open source license.
- */
-
 YAHOO.util.Event.onDOMReady(function () {
-
-	YAHOO.namespace("AIR");
+  setTimeout(function() {
+	YAHOO.namespace("TI");
 	
-	YAHOO.AIR.Sideline = function () {
+	YAHOO.TI.Sideline = function () {
 		var rotationTimer,
 			rotationJobCount = 0,
 			rotationTotal    = 0;
 	};
-	YAHOO.AIR.Sideline.prototype = {
+	YAHOO.TI.Sideline.prototype = {
 		tabView: null,
 		tabStore: [],
 		showDesktopNotifications: null,
@@ -324,7 +318,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			
 			var handleCancel = function () {
 				//Restore current setting from stored prefs in cause they changed, but did not save
-				YAHOO.AIR.Sideline.slider.setValue((that.searchRefreshRate / 6) * 20, false);
+				YAHOO.TI.Sideline.slider.setValue((that.searchRefreshRate / 6) * 20, false);
 				this.cancel();
 			};
 		
@@ -521,21 +515,21 @@ YAHOO.util.Event.onDOMReady(function () {
 											);
 		
 			//We need to open a tab for each group
-			for (var i = 0; i < sidelineGroups.data.length; i++) {				
+			for (var i = 0; i < sidelineGroups.rows.length; i++) {				
 				//Collect tweets for this group and build tweet rows for this tab if we have data
 				var tweetStr       = '',
 					tweetStrParts  = [],
 					tabLabel	   = '',
-					grpTweets      = this.getTweets(sidelineGroups.data[i].id);				
+					grpTweets      = this.getTweets(sidelineGroups.rows[i].id);				
 				
-				tweetStrParts[tweetStrParts.length] = '<div id="summary-group-' + sidelineGroups.data[i].id + '" class="tweet-container summary-group-' + sidelineGroups.data[i].id + '">';
-				if (grpTweets.data !== null) {
-					var c = 0, j, numTweets = grpTweets.data.length;
+				tweetStrParts[tweetStrParts.length] = '<div id="summary-group-' + sidelineGroups.rows[i].id + '" class="tweet-container summary-group-' + sidelineGroups.rows[i].id + '">';
+				if (grpTweets.rows !== null) {
+					var c = 0, j, numTweets = grpTweets.rows.length;
 					for (j = 0; j < numTweets; j++) {
 						var buttonClass, buttonTask, buttonTitle;
 						
 						//Determine fav image and task (ie) remove + delete icon for those in the Favorites group and fav + star icon for all others
-						if (sidelineGroups.data[i].group_name === 'Favorites') {
+						if (sidelineGroups.rows[i].group_name === 'Favorites') {
 							buttonClass = 'delete_button';
 							buttonTask  = 'remove';
 							buttonTitle = 'Remove this Tweet';
@@ -546,25 +540,25 @@ YAHOO.util.Event.onDOMReady(function () {
 						}
 						
 						//Available fields: text,to_user_id,from_user,twitter_id,from_user_id,profile_image_url,created_at
-						tweetStrParts[tweetStrParts.length] = '<div class="single-tweet search-term-' + grpTweets.data[j].searches_id + ' detail-group-' + sidelineGroups.data[i].id + '" id="tweet__' + grpTweets.data[j].id + '__' + grpTweets.data[j].twitter_id + '">';
+						tweetStrParts[tweetStrParts.length] = '<div class="single-tweet search-term-' + grpTweets.rows[j].searches_id + ' detail-group-' + sidelineGroups.rows[i].id + '" id="tweet__' + grpTweets.rows[j].id + '__' + grpTweets.rows[j].twitter_id + '">';
 						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-left">';
-						tweetStrParts[tweetStrParts.length] = 		'<img height="48" width="48" class="profile_image" src="' + grpTweets.data[j].profile_image_url + '" alt="' + grpTweets.data[j].from_user + '" />';
+						tweetStrParts[tweetStrParts.length] = 		'<img height="48" width="48" class="profile_image" src="' + grpTweets.rows[j].profile_image_url + '" alt="' + grpTweets.rows[j].from_user + '" />';
 						tweetStrParts[tweetStrParts.length] = 	'</div>';
 						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-center">';
-						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet_text" id="db_' + grpTweets.data[j].id + '">';
-						tweetStrParts[tweetStrParts.length] = 			'<a title="open in browser" style="text-decoration: underline;" class="tweet_link" href="http://twitter.com/' + encodeURIComponent(grpTweets.data[j].from_user) + '">' + grpTweets.data[j].from_user + '</a>&nbsp;' + grpTweets.data[j].text;
+						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet_text" id="db_' + grpTweets.rows[j].id + '">';
+						tweetStrParts[tweetStrParts.length] = 			'<a title="open in browser" style="text-decoration: underline;" class="tweet_link" href="http://twitter.com/' + encodeURIComponent(grpTweets.rows[j].from_user) + '">' + grpTweets.rows[j].from_user + '</a>&nbsp;' + grpTweets.rows[j].text;
 						tweetStrParts[tweetStrParts.length] = 		'</p>';
-						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet-date">' + grpTweets.data[j].created_at + '</p>';
+						tweetStrParts[tweetStrParts.length] = 		'<p class="tweet-date">' + grpTweets.rows[j].created_at + '</p>';
 						tweetStrParts[tweetStrParts.length] = 	'</div>';
 						tweetStrParts[tweetStrParts.length] = 	'<div class="tweet-container-right">';
-						tweetStrParts[tweetStrParts.length] =		'<span title="' + buttonTitle + '" class="fav_reply_remove ' + buttonClass + '" id="' + buttonTask + '__' + grpTweets.data[j].twitter_id + '__' + grpTweets.data[j].from_user + '"></span>';
-						tweetStrParts[tweetStrParts.length] = 		'<span title="Reply to Tweet" class="fav_reply_remove reply_button" id="reply__' + grpTweets.data[j].twitter_id + '__' + grpTweets.data[j].from_user + '"></span>';
+						tweetStrParts[tweetStrParts.length] =		'<span title="' + buttonTitle + '" class="fav_reply_remove ' + buttonClass + '" id="' + buttonTask + '__' + grpTweets.rows[j].twitter_id + '__' + grpTweets.rows[j].from_user + '"></span>';
+						tweetStrParts[tweetStrParts.length] = 		'<span title="Reply to Tweet" class="fav_reply_remove reply_button" id="reply__' + grpTweets.rows[j].twitter_id + '__' + grpTweets.rows[j].from_user + '"></span>';
 						tweetStrParts[tweetStrParts.length] = 	'</div>';
 						tweetStrParts[tweetStrParts.length] = 	'<br class="clear" />'; //break inside node so it fades with node
 						tweetStrParts[tweetStrParts.length] = '</div>';
 					}
 				} else {
-					tweetStrParts[tweetStrParts.length] = '<p id="emptygroup__' + sidelineGroups.data[i].id + '">This group has no search results yet!</p>';
+					tweetStrParts[tweetStrParts.length] = '<p id="emptygroup__' + sidelineGroups.rows[i].id + '">This group has no search results yet!</p>';
 				}
 				
 				//Close it up
@@ -573,12 +567,12 @@ YAHOO.util.Event.onDOMReady(function () {
 				tweetStr = tweetStrParts.join("");
 				
 				//Add a new tab per group
-				tabLabel = this.buildTabText(sidelineGroups.data[i].group_name);
-			  this.tabView.addTab(new YAHOO.widget.Tab({
-			    label: tabLabel,
-			    content: tweetStr,
-			    active: false
-			  }));
+				tabLabel = this.buildTabText(sidelineGroups.rows[i].group_name);
+			    this.tabView.addTab(new YAHOO.widget.Tab({
+			        label: tabLabel,
+			        content: tweetStr,
+			        active: false
+			    }));
 				
 				this.tabView.appendTo('tweetainer'); //Inject new tab
 			}
@@ -730,9 +724,9 @@ YAHOO.util.Event.onDOMReady(function () {
 			//Fetch existing search parameters
 			var searchItemParams = this.getSearchItemParams(search_id);
 			
-			if (YAHOO.lang.isObject(searchItemParams.data) && searchItemParams.data[0].id !== 'undefined') {
+			if (YAHOO.lang.isObject(searchItemParams.rows) && searchItemParams.rows[0].id !== 'undefined') {
 				//Restore form data
-				var searchItem = searchItemParams.data[0],
+				var searchItem = searchItemParams.rows[0],
 					searchTitle = searchItem.search_title,
 					q           = reversePlus(searchItem.q),
 					ands        = reversePlus(searchItem.ands),
@@ -929,7 +923,7 @@ YAHOO.util.Event.onDOMReady(function () {
 				//Add to tabStore if new and not the dynamic trends tab
 				if (tabText !== 'Trends') {
 					grpIDResult   = this.getGroupIdFromString(tabText);
-					grpID         = Number(grpIDResult.data[0].id);
+					grpID         = Number(grpIDResult.rows[0].id);
 					grpTweetCount = this.getTweetCountForSearchGroup(grpID);
 					if (YAHOO.lang.isUndefined(this.tabStore[grpID])) {
 						this.tabStore[grpID] = {
@@ -945,7 +939,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			//The favorites and trends tabs are special (we need some extra metadata)
 			if (YAHOO.lang.isUndefined(this.tabStore.favoritesGrpID)) {
 				var favGrpIDResult = this.getGroupIdFromString('Favorites');
-				this.tabStore.favoritesGrpID = Number(favGrpIDResult.data[0].id);
+				this.tabStore.favoritesGrpID = Number(favGrpIDResult.rows[0].id);
 			}
 			if (YAHOO.lang.isUndefined(this.tabStore.trendsGrpID)) {
 				this.tabStore.trendsGrpID = -1;
@@ -979,12 +973,12 @@ YAHOO.util.Event.onDOMReady(function () {
 				tmpString = '',
 				searchStringList = YAHOO.util.Dom.get("active_search_strings");
 				
-			if (search_strings.data !== null) {
-				var numOfSearches = search_strings.data.length || 'undefined';
+			if (search_strings.rows !== null) {
+				var numOfSearches = search_strings.rows.length || 'undefined';
 				
 				for (i = 0; i < numOfSearches; i++) {
-					var searchId          = search_strings.data[i].id,
-						searchQueryString = search_strings.data[i].search_title;
+					var searchId          = search_strings.rows[i].id,
+						searchQueryString = search_strings.rows[i].search_title;
 					
 					tmpString += '<li id="search__' + searchId + '" class="search_string_item">' + searchQueryString + '</li>';
 				}
@@ -1275,13 +1269,13 @@ YAHOO.util.Event.onDOMReady(function () {
 				scaleFactor  = 18,  //Scale factor for converting the pixel offset into a real value
 				keyIncrement = 20;  //The amount the slider moves when the value is changed with the arrow
 	
-		    YAHOO.AIR.Sideline.slider = YAHOO.widget.Slider.getHorizSlider("slider-bg", "slider-thumb", 0, 200, 20);
-		    YAHOO.AIR.Sideline.slider.animate = true;
+		    YAHOO.TI.Sideline.slider = YAHOO.widget.Slider.getHorizSlider("slider-bg", "slider-thumb", 0, 200, 20);
+		    YAHOO.TI.Sideline.slider.animate = true;
 			
 			//Restore current setting from stored prefs and animate to proper position
-			YAHOO.AIR.Sideline.slider.setValue((this.searchRefreshRate / 6) * 20, false);
+			YAHOO.TI.Sideline.slider.setValue((this.searchRefreshRate / 6) * 20, false);
 		
-		    YAHOO.AIR.Sideline.slider.getRealValue = function() {
+		    YAHOO.TI.Sideline.slider.getRealValue = function() {
 				var rv = Math.round(this.getValue() * scaleFactor) / 60;
 				if (rv === 0) {
 					rv = 1; //1 min refresh is the minimum
@@ -1290,10 +1284,10 @@ YAHOO.util.Event.onDOMReady(function () {
 		        return rv;
 		    };
 		
-		    YAHOO.AIR.Sideline.slider.subscribe("change", function(offsetFromStart) {
+		    YAHOO.TI.Sideline.slider.subscribe("change", function(offsetFromStart) {
 		        //Use the scale factor to convert the pixel offset into a real value
 				var fld = YAHOO.util.Dom.get(convertedval),
-					actualValue = YAHOO.AIR.Sideline.slider.getRealValue();
+					actualValue = YAHOO.TI.Sideline.slider.getRealValue();
 		        
 				fld.innerHTML = actualValue;
 		
@@ -1342,14 +1336,13 @@ YAHOO.util.Event.onDOMReady(function () {
 	/**
 	 * Sideline misc utility functions
 	 */
-	YAHOO.AIR.SidelineUtil = function () {};
-	YAHOO.AIR.SidelineUtil.prototype = {
+	YAHOO.TI.SidelineUtil = function () {};
+	YAHOO.TI.SidelineUtil.prototype = {
 		/**
 		 * Used to scan for and record new matched tweets. Scheduled via setInterval.
 		 */
 		dataRotation : function () {
 			var i,
-			  sideline = this,
 				twitterRequestUrl = 'http://search.twitter.com/search.json?',
 				sidelineGroups    = this.getAllSidelineGroups(), //Start by getting the active group (refetching in case they have changed since startup)
 				numOfGroups       = sidelineGroups.data.length;
@@ -1678,7 +1671,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			});
 		},
 		/**
-		 * AIR process to check for and handle application updates
+		 * TI process to check for and handle application updates
 		 */
 		doSidelineUpdateCheck : function() {
 			//Instantiate an updater object and set the URL for the update.xml file
@@ -1920,35 +1913,59 @@ YAHOO.util.Event.onDOMReady(function () {
 	/**
 	 * Sideline database functionality
 	 */
-	YAHOO.AIR.SidelineDB = function () {};
-	YAHOO.AIR.SidelineDB.prototype = {
+	YAHOO.TI.SidelineDB = function () {};
+	YAHOO.TI.SidelineDB.prototype = {
 		db : null,
-		dbFile : null,
+		querying: false,
+		pendingResult: null,
 		/**
 		 * Executes a SQL statement against the database and return the results
 		 * @param {Object} sql
 		 */
 		doQuery : function (sql, sqlParameters) {
-			var stmt           = new air.SQLStatement();
-			stmt.sqlConnection = this.db;
-			stmt.text          = sql;
-			
-			if (YAHOO.lang.isObject(sqlParameters) && sqlParameters[0] !== 'undefined') {
-	            for (var i = 0; i < sqlParameters.length; i++) {
-					stmt.parameters[i] = sqlParameters[i];
-				}
-			}
-	        
-			try {
-				stmt.execute();
-			} catch (error) {
-				air.trace("Error executing SQL:", error);
-				air.trace(error.message);
-				air.trace(stmt.text);
-				return;
-			}
-			
-			return stmt.getResult();
+		  var returnObj = null;
+		  var done = false;
+      
+      //default parameters if need be
+      if (typeof(sqlParameters) === 'undefined') {
+        sqlParameters = [];
+      }
+      
+      //Execute the given statement
+	    this.db.transaction(function(tx) {
+	      tx.executeSql(sql,sqlParameters,function(tx,results){
+	        returnObj = results;
+	        done = true;
+	      },function(tx,error) {
+          done = true;
+          window.console.log(error.message);
+	        Titanium.API.debug(error.message);
+	      });
+	    });
+      
+      //wait for result - wait for a half second each time the response does not come back
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > 3000) {
+          break;
+        }
+      }
+			return returnObj;
+		},
+		returnPending: function() {
+		  if (querying) {
+		    return
+		  }
+		}
+		/**
+		 * Initialize the database as needed
+		 */
+		initializeDatabase: function() {
+		  this.doQuery(this.sql.createSearchGroups);
+		  this.doQuery(this.sql.insertFavorites);
+		  this.doQuery(this.sql.createSearches);
+		  this.doQuery(this.sql.createUserPreferences);
+		  this.doQuery(this.sql.createTweets);
 		},
 		/**
 		 * Remove all non-fav tweets older than 3 hours
@@ -2322,7 +2339,19 @@ YAHOO.util.Event.onDOMReady(function () {
 			sqlParameters[sqlParameters.length]  = searchId;
 				
 			this.doQuery(updateSQL, sqlParameters);
-		}
+		},
+  	//Canned SQL statements for use by the application
+  	sql: {
+  	  createSearchGroups: "CREATE TABLE IF NOT EXISTS search_groups(id INTEGER PRIMARY KEY NOT NULL, group_name TEXT NOT NULL,active TEXT NOT NULL DEFAULT 'Y');",
+  	  createSearches: "CREATE TABLE IF NOT EXISTS searches(id INTEGER PRIMARY KEY NOT NULL, group_id INTEGER NOT NULL, search_title TEXT NOT NULL,actual_query_string TEXT,q TEXT,ands TEXT,ors TEXT,nots TEXT,phrase TEXT,tag TEXT,user_from TEXT,user_to TEXT,ref TEXT,pa TEXT,na TEXT,aq TEXT,twitter_starting_point INTEGER,active TEXT DEFAULT 'Y');",
+      createTweets: "CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY NOT NULL,text TEXT,to_user_id INTEGER,from_user TEXT,twitter_id INTEGER,from_user_id INTEGER,profile_image_url TEXT,created_at TEXT,searches_id INTEGER,sideline_group_id INTEGER,loaded_at DATETIME DEFAULT CURRENT_TIMESTAMP);",
+      createUserPreferences: "CREATE TABLE IF NOT EXISTS user_preferences(show_desktop_notifications INTEGER NOT NULL DEFAULT 1, refresh_rate INTEGER NOT NULL DEFAULT 1);",
+      insertFavorites: "INSERT INTO search_groups(id,group_name,active) VALUES (1,'Favorites', 'Y');",
+  	  getUserPreferences: "SELECT show_desktop_notifications, refresh_rate FROM user_preferences",
+  	  getAllSidelineGroups: "SELECT id, group_name FROM search_groups WHERE active='Y' ORDER BY id ASC",
+  	  getTweets: "SELECT id, text, from_user, twitter_id, profile_image_url, created_at, sideline_group_id, searches_id FROM tweets WHERE sideline_group_id = ? ORDER BY twitter_id DESC",
+  	  getGroupIdFromString: "SELECT id FROM search_groups WHERE group_name = ?"
+  	}
 	};
 	
 	/**
@@ -2331,208 +2360,166 @@ YAHOO.util.Event.onDOMReady(function () {
 	 * Note: Slightly modified for this application
 	 */
 	(function () {
-	    YAHOO.namespace('widget.alert');
-	
-	    var alert_old = window.alert;
-	    window.alert = function (str) {
-	        YAHOO.widget.alert.dlg.setBody(str);
-	        YAHOO.widget.alert.dlg.cfg.queueProperty('icon', YAHOO.widget.SimpleDialog.ICON_WARN);
-	        YAHOO.widget.alert.dlg.cfg.queueProperty('zIndex', 9999);
-	        YAHOO.widget.alert.dlg.render(document.body);
-	        if (YAHOO.widget.alert.dlg.bringToTop) {
-	            YAHOO.widget.alert.dlg.bringToTop();
-	        }
-	        YAHOO.widget.alert.dlg.show();
-	    };
-	
-	    YAHOO.util.Event.on(window, 'load', function () {
-	        var handleOK = function () {
-	            this.hide();
-	        };
-	
-	        YAHOO.widget.alert.dlg = new YAHOO.widget.SimpleDialog('widget_alert', {
-	            visible: false,
-	            width: '20em',
-	            zIndex: 9999,
-	            close: false,
-	            fixedcenter: true,
-	            modal: false,
-				underlay: "none",
-	            draggable: false,
-	            constraintoviewport: true, 
-	            icon: YAHOO.widget.SimpleDialog.ICON_WARN,
-	            buttons: [
-	                { text: 'OK', handler: handleOK }
-	                ]
-	        });
-	        YAHOO.widget.alert.dlg.setHeader("Alert!");
-	        YAHOO.widget.alert.dlg.setBody('Alert body passed to window.alert'); // Bug in panel, must have a body when rendered
-	        YAHOO.widget.alert.dlg.render(document.body);
-	    });
-	})();
+    YAHOO.namespace('widget.alert');  
+    YAHOO.widget.alert.dlg = new YAHOO.widget.SimpleDialog('widget_alert', {
+      visible: false,
+      width: '20em',
+      zIndex: 9999,
+      close: false,
+      fixedcenter: true,
+      modal: false,
+      underlay: "none",
+      draggable: false,
+      constraintoviewport: true, 
+      icon: YAHOO.widget.SimpleDialog.ICON_WARN,
+      buttons: [
+      { 
+        text: 'OK', 
+        handler: function () {
+          this.hide();
+        }
+      }
+      ]
+    });
+
+    YAHOO.widget.alert.dlg.setHeader("Alert!");
+    YAHOO.widget.alert.dlg.setBody('Alert body passed to window.alert'); // Bug in panel, must have a body when rendered
+    YAHOO.widget.alert.dlg.render(document.body);
+
+    var alert_old = window.alert;
+    window.alert = function (str) {
+      YAHOO.widget.alert.dlg.setBody(str);
+      YAHOO.widget.alert.dlg.cfg.queueProperty('icon', YAHOO.widget.SimpleDialog.ICON_WARN);
+      YAHOO.widget.alert.dlg.cfg.queueProperty('zIndex', 9999);
+      YAHOO.widget.alert.dlg.render(document.body);
+      if (YAHOO.widget.alert.dlg.bringToTop) {
+        YAHOO.widget.alert.dlg.bringToTop();
+      }
+      YAHOO.widget.alert.dlg.show();
+    };
+ 	})();
 	
 	/*************************
 	 * Run the init processes
 	 *************************/
 	
 	(function() {
+
+    var sideline = new YAHOO.TI.Sideline();
+    YAHOO.lang.augment(YAHOO.TI.Sideline, YAHOO.TI.SidelineDB);   //Add database functionality
+    YAHOO.lang.augment(YAHOO.TI.Sideline, YAHOO.TI.SidelineUtil); //Add utility support as well	
+
+    //Initialize database - when DB is intialized, have sideline initialize its self
+		sideline.db = openDatabase("ti_sideline","1.0", "Sideline", 200000);
+		sideline.initializeDatabase();
+
+    //Configure sideline per user preferences
+    var userPreferencesData = sideline.getUserPreferences();
+    if (!YAHOO.lang.isNull(userPreferencesData) && !YAHOO.lang.isNull(userPreferencesData.data)) {
+      sideline.showDesktopNotifications = userPreferencesData.data[0].show_desktop_notifications;
+      sideline.searchRefreshRate = userPreferencesData.data[0].refresh_rate;
+    } 
+    else {
+      //Defaults
+      sideline.showDesktopNotifications = 1;
+      sideline.searchRefreshRate = 1;
+    }
+
+    //Create tabs and dialogs
+    sideline.tabView = new YAHOO.widget.TabView();
+    sideline.setupSidelineTabs();
+    sideline.setupTooltip();
+    sideline.setupRefreshRateSlider();
+    sideline.searchDialogBuilder();
+    sideline.searchGrpDialogBuilder();
+    sideline.renameSearchGrpDialogBuilder();
+    sideline.searchGrpRemovalDialog();
+    sideline.searchRateDialogBuilder();
+
+    /**
+    * Perform database cleanup on startup and schedule for every 3ish hours thereafter
+    * Note: Tweets are cleared from the database, but not the DOM.  Will not be redrawn on next app startup. 
+    */
+    sideline.dbCleanup();
+    setInterval(function () {
+      sideline.dbCleanup();
+    }, 10860000);
+
+    //Additional event handlers
+    YAHOO.util.Event.on('active_search_container', 'click', sideline.activeSearchHandler, sideline, true);
+    YAHOO.util.Event.on('twitter_trend_list', 'click', sideline.handleTrendEvents, sideline, true);
+    YAHOO.util.Event.on('tweetainer', 'click', function(e) {
+      //Presents the search group removal confirmation dialog when tab close is requested
+      var eltarget = YAHOO.util.Event.getTarget(e);
+      if (YAHOO.util.Dom.hasClass(eltarget, "close-search-group")) {
+        sideline.searchGrpRemoval.show();
+      } else if (YAHOO.util.Dom.hasClass(eltarget, "fav_reply_remove")) {
+        //Handle the tweet reply, fav, remove click actions
+        sideline.handleTweetReplyFavRemove(eltarget);
+      } else if (YAHOO.util.Dom.hasClass(eltarget, 'tweet_link')) {
+        //Handle the tweet link click actions
+        YAHOO.util.Event.preventDefault(e);
+        sideline.openInBrowser(eltarget.href);
+      }
+    });	
+    YAHOO.util.Event.on('yui_link', 'click', function(e) {
+      YAHOO.util.Event.preventDefault(e);
+      var eltarget = YAHOO.util.Event.getTarget(e);
+      sideline.openInBrowser(eltarget.href);
+    });
+    YAHOO.util.Event.on('manual_refresh', 'click', function() {			
+      sideline.doIntermediateDataRotation.call(sideline);
+    }, sideline, true);
+
+    //Construct the options menu
+    YAHOO.util.Event.onContentReady("options_menu", function () {
+    //Menu item selection handler
+    function onMenuItemClick(p_sType, p_aArgs, p_oValue){
+      //Gather details about the selected menu entry
+      var currentProperty = this.cfg.getProperty("checked"), itemTitle = this.value;
+
+      if (itemTitle === 'notification') {
+        this.cfg.setProperty("checked", !currentProperty);
+        sideline.showDesktopNotifications = Number(!currentProperty);
+        sideline.saveUserPreferences();
+
+      } else if (itemTitle === 'import') {
+        sideline.importSearchGrps(); //Run the local file import process
+      } else if (itemTitle === 'help') {
+        sideline.openInBrowser('http://sideline.yahoo.com/help.php');
+      } else if (itemTitle === 'rate') {
+        sideline.searchRateDialog.show();
+      }
+    }
 		
-		var chAir = new YAHOO.AIR.Sideline();
-		YAHOO.lang.augment(YAHOO.AIR.Sideline, YAHOO.AIR.SidelineDB);   //Add database functionality
-		YAHOO.lang.augment(YAHOO.AIR.Sideline, YAHOO.AIR.SidelineUtil); //Add utility support as well	
+		//Create an array of YAHOO.widget.MenuItem configuration properties
+		var aMenuButtonMenu = [
+			{ text: "Import Search Groups", value: "import", onclick: { fn: onMenuItemClick } },
+	    { text: "Show Notifications", value: "notification", checked: !!sideline.showDesktopNotifications, onclick: { fn: onMenuItemClick } },
+			{ text: "Adjust Refresh Rate", value: "rate", onclick: { fn: onMenuItemClick } },
+			{ text: "Help", value: "help", onclick: { fn: onMenuItemClick } }
+		];
 		
-		//Setup our SQLite database
-		chAir.db = new air.SQLConnection();
-		chAir.dbFile = air.File.applicationStorageDirectory.resolvePath("sideline_v1.db");
-		
-		if (!chAir.dbFile.exists) {
-			var dbTemplate = air.File.applicationDirectory.resolvePath("sideline_base.db");
-			dbTemplate.copyTo(chAir.dbFile, true);
-		}
-		
-		try {
-			chAir.db.open(chAir.dbFile);
-			chAir.db.compact(); //Vacuum/cleanup database for optimal performance
-		} catch (error) {
-			air.trace("DB error:", error.message);
-			air.trace("Details:", error.details);
-		}
-		
-		//Apply a temporary fix for Windows environments to work around an AIR font rendering issue
-		if (navigator.platform.indexOf("Win") === 0) {
-			YAHOO.util.Dom.addClass(document.body, "windowsFontFix");
-		}
-		
-		//Configure sideline per user preferences
-		var userPreferencesData = chAir.getUserPreferences();
-		if (!YAHOO.lang.isNull(userPreferencesData) && !YAHOO.lang.isNull(userPreferencesData.data)) {
-			chAir.showDesktopNotifications = userPreferencesData.data[0].show_desktop_notifications;
-			chAir.searchRefreshRate = userPreferencesData.data[0].refresh_rate;
-		} else {
-			//Defaults
-			chAir.showDesktopNotifications = 1;
-			chAir.searchRefreshRate = 1;
-		}
-		
-		//Create tabs and dialogs
-		chAir.tabView = new YAHOO.widget.TabView();
-		chAir.setupSidelineTabs();
-		chAir.setupTooltip();
-		chAir.setupRefreshRateSlider();
-		chAir.searchDialogBuilder();
-		chAir.searchGrpDialogBuilder();
-		chAir.renameSearchGrpDialogBuilder();
-		chAir.searchGrpRemovalDialog();
-		chAir.searchRateDialogBuilder();
-		
-		//Setup native window event handlers
-		window.nativeWindow.addEventListener(air.Event.CLOSING, function(event) {
-			//Stop the normal application close event and make sure to close all windows, not just the main one
-			event.preventDefault();
-			for (var i = air.NativeApplication.nativeApplication.openedWindows.length - 1; i >= 0; i--) {
-				air.NativeWindow(air.NativeApplication.nativeApplication.openedWindows[i]).close();
-			}
-		});
-		YAHOO.util.Event.on('hd', 'mousedown', function() {
-			window.nativeWindow.startMove();
-		});
-		
-		/**
-		 * Perform database cleanup on startup and schedule for every 3ish hours thereafter
-		 * Note: Tweets are cleared from the database, but not the DOM.  Will not be redrawn on next app startup. 
-		 */
-		chAir.dbCleanup();
-		setInterval(function () {
-			chAir.dbCleanup();
-		}, 10860000);
-		
-		//Additional event handlers
-		YAHOO.util.Event.on('active_search_container', 'click', chAir.activeSearchHandler, chAir, true);
-		YAHOO.util.Event.on('twitter_trend_list', 'click', chAir.handleTrendEvents, chAir, true);
-		YAHOO.util.Event.on('tweetainer', 'click', function(e) {
-			//Presents the search group removal confirmation dialog when tab close is requested
-			var eltarget = YAHOO.util.Event.getTarget(e);
-			if (YAHOO.util.Dom.hasClass(eltarget, "close-search-group")) {
-				chAir.searchGrpRemoval.show();
-			} else if (YAHOO.util.Dom.hasClass(eltarget, "fav_reply_remove")) {
-				//Handle the tweet reply, fav, remove click actions
-				chAir.handleTweetReplyFavRemove(eltarget);
-			} else if (YAHOO.util.Dom.hasClass(eltarget, 'tweet_link')) {
-				//Handle the tweet link click actions
-				YAHOO.util.Event.preventDefault(e);
-				chAir.openInBrowser(eltarget.href);
-			}
-		});	
-		YAHOO.util.Event.on('yui_link', 'click', function(e) {
-			YAHOO.util.Event.preventDefault(e);
-			var eltarget = YAHOO.util.Event.getTarget(e);
-			chAir.openInBrowser(eltarget.href);
-		});
-		YAHOO.util.Event.on('manual_refresh', 'click', function() {			
-			chAir.doIntermediateDataRotation.call(chAir);
-		}, chAir, true);
-		
-		//Construct the options menu
-		YAHOO.util.Event.onContentReady("options_menu", function () {
-			//Menu item selection handler
-			function onMenuItemClick(p_sType, p_aArgs, p_oValue){
-				//Gather details about the selected menu entry
-				var currentProperty = this.cfg.getProperty("checked"), itemTitle = this.value;
-				
-				if (itemTitle === 'notification') {
-					this.cfg.setProperty("checked", !currentProperty);
-					chAir.showDesktopNotifications = Number(!currentProperty);
-					chAir.saveUserPreferences();
-					
-				} else if (itemTitle === 'import') {
-					chAir.importSearchGrps(); //Run the local file import process
-				} else if (itemTitle === 'help') {
-					chAir.openInBrowser('http://sideline.yahoo.com/help.php');
-				} else if (itemTitle === 'rate') {
-					chAir.searchRateDialog.show();
-				}
-			}
-		
-			//Create an array of YAHOO.widget.MenuItem configuration properties
-			var aMenuButtonMenu = [
-				{ text: "Import Search Groups", value: "import", onclick: { fn: onMenuItemClick } },
-	            { text: "Show Notifications", value: "notification", checked: !!chAir.showDesktopNotifications, onclick: { fn: onMenuItemClick } },
-				{ text: "Adjust Refresh Rate", value: "rate", onclick: { fn: onMenuItemClick } },
-				{ text: "Help", value: "help", onclick: { fn: onMenuItemClick } }
-			];
-		
-			//Instantiate a Menu Button using the array of YAHOO.widget.MenuItem 
-			var oMenuButton = new YAHOO.widget.Button({ type: "menu", 
-														label: "Options", 
-														name: "menubutton", 
-														menu: aMenuButtonMenu, 
-														container: this });
+		//Instantiate a Menu Button using the array of YAHOO.widget.MenuItem 
+		var oMenuButton = new YAHOO.widget.Button({ 
+		  type: "menu", 
+			label: "Options", 
+			name: "menubutton", 
+			menu: aMenuButtonMenu, 
+		  container: this });
 		});     
 		
 		//Run Trend fetcher on startup and schedule for every 5 mins thereafter (while the application is open that is)
-		chAir.getTwitterTrends();
+		sideline.getTwitterTrends();
 		setInterval(function () {
-			chAir.getTwitterTrends();
+			sideline.getTwitterTrends();
 		}, 300000);
 		
 		//Run Tweet fetcher on startup and schedule for future runs thereafter (while the application is open that is)
-		chAir.dataRotation();
-		chAir.rotationTimer = setInterval(function () {
-								chAir.dataRotation();
-							}, chAir.searchRefreshRate * 60000);
-		
-		/**
-		 * Do update and healthchecks.  The healthchecks are done as a safety precaution so 
-		 * that we can put the application in maintenance mode in the event that a security issue 
-		 * is identified.  We'd take it out if we could, but our security policy prohibits this.
-		 */
-		chAir.doSidelineUpdateCheck();
-		var airApplicationVersion, appXML, xmlObject;
-    	appXML    = air.NativeApplication.nativeApplication.applicationDescriptor;
-   		xmlObject = (new DOMParser()).parseFromString(appXML, "text/xml");
-    	airApplicationVersion = xmlObject.getElementsByTagName('version')[0].firstChild.nodeValue;
-		chAir.fetchExternalJSONData(chAir.healthCheck, 'http://sideline.yahoo.com/status.php?appversion=' + airApplicationVersion);
-		
+		sideline.dataRotation();
+		sideline.rotationTimer = setInterval(function () {
+			sideline.dataRotation();
+		}, sideline.searchRefreshRate * 60000);
 	})();
-
+},1000);
 });
