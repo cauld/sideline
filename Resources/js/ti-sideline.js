@@ -1659,24 +1659,10 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Used to create system notifications displayed when new search results are found
 		 */
 		displaySearchResultNotification : function() {
-		  //Define the markup for our notification window
-			var notificationHTML = '<html>' +
-									'<head><title>Sideline Notification</title></head>' +
-									'<body style="opacity: 0.5;">' +
-										'<div style="color: white; background-color: black; padding: 20px; margin: 10px; -webkit-border-radius: 10px; -webkit-box-shadow: 0px 0px 10px #000;">' +
-											'<h1 style="font-size: 14px;">Sideline Notification</h1>' +
-											'<p style="font-size: 12px;">You have ' +
-											this.rotationTotal +
-											' new search results</p>' +
-										'</div>' +
-									'</body>' +
-									'</html>';
-		  var notification = Titanium.Notification.createNotification(window);
+		  /*var notification = Titanium.Notification.createNotification(window);
       notification.setTitle("New Tweets Received!");
-      notification.setMessage(notificationHTML);
-      notification.setIcon("app://images/ybang_16.png");
-      notification.show();
-									
+      notification.setMessage("You have new tweets.");
+      notification.show();*/
 		},
 		/**
 		 * Used to locate and start import of a json data file of search groups and related search terms
