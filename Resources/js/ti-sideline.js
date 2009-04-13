@@ -1582,11 +1582,11 @@ YAHOO.util.Event.onDOMReady(function () {
   						aq: 'false'
   					};
 
-  					this.addSearchItem(trendSearchItem);
+  					sideline.addSearchItem(trendSearchItem);
 
   					//New group was created so add the tab and make it active
   					tabLabel = this.buildTabText(trendTitle);
-  					this.tabView.addTab(new YAHOO.widget.Tab({ 
+  					sideline.tabView.addTab(new YAHOO.widget.Tab({ 
   													label: tabLabel,
   													active: false,
   													content: '<div id="summary-group-' + newTrendGrpID + '" class="tweet-container summary-group-' + newTrendGrpID + '">' +
@@ -1595,14 +1595,14 @@ YAHOO.util.Event.onDOMReady(function () {
   											);
 
   					//Cache the new tab details, update click handlers, and set active tab to the newly added tab
-  					this.remove(YAHOO.util.Dom.get("add_new_group"));
-  					this.refreshTabStore();
-  					this.setupNewTabButton();
+  					sideline.remove(YAHOO.util.Dom.get("add_new_group"));
+  					sideline.refreshTabStore();
+  					sideline.setupNewTabButton();
   					//Note: We set this way instead of in addTab to make sure the activeTabChange event fires
-  					this.tabView.set('activeIndex', this.tabStore.tabCount - 1);
+  					sideline.tabView.set('activeIndex', this.tabStore.tabCount - 1);
 
   					//Run rotation
-  					this.doIntermediateDataRotation();
+  					sideline.doIntermediateDataRotation();
   				}
 				});
 			}
