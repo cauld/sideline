@@ -309,7 +309,7 @@ YAHOO.util.Event.onDOMReady(function () {
   						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
   						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
 
-  						this.hide(); //Hide the search group dialog after sucessful save
+  						that.hide(); //Hide the search group dialog after sucessful save
   						YAHOO.util.Dom.get('add_search_group_form').reset(); //Prepare for future use
   						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible'); //Set to display on tab change, but if first tab this would be missing
   					} else {
@@ -935,9 +935,9 @@ YAHOO.util.Event.onDOMReady(function () {
 				if (tabText !== 'Trends') {
 				  this.getGroupIdFromString(tabText, function(grpIDResult) {
 				    var grpID = Number(grpIDResult.rows.item(0).id);
-				    this.getTweetCountForSearchGroup(grpID, function(grpTweetCount) {
-				      if (YAHOO.lang.isUndefined(this.tabStore[grpID])) {
-    						this.tabStore[grpID] = {
+				    that.getTweetCountForSearchGroup(grpID, function(grpTweetCount) {
+				      if (YAHOO.lang.isUndefined(that.tabStore[grpID])) {
+    						that.tabStore[grpID] = {
     							nodeReference: searchGrpTabs[t], 
     							label: searchGrpTabs[t].innerHTML, 
     							newTweetCount: 0,
