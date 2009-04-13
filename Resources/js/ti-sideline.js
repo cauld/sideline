@@ -4,7 +4,8 @@
  * the BSD (revised) open source license.
  */
 
-YAHOO.util.Event.onDOMReady(function () {
+YAHOO.util.Event.onDOMReady(function () { 
+  
 	YAHOO.namespace("TI");
 	
 	YAHOO.TI.Sideline = function () {
@@ -67,6 +68,7 @@ YAHOO.util.Event.onDOMReady(function () {
 	
 			//Define various event handlers for Dialog
 			var handleSubmit = function () {
+			  var thisWindow = this;
 				//Gather up the form inputs
 				var queryString,
 					data   = this.getData(),
@@ -171,7 +173,7 @@ YAHOO.util.Event.onDOMReady(function () {
     								that.remove(firstChild);
     							}
 
-    							this.hide(); //Hide the search dialog after sucessful save
+    							thisWindow.hide(); //Hide the search dialog after sucessful save
     							YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
     						}
     						else {
@@ -179,19 +181,20 @@ YAHOO.util.Event.onDOMReady(function () {
     						}
   					  });
   					} else {
-  						that.updateSearchItem(searchId, searchItemDetails);
-  						YAHOO.util.Dom.get('search__' + searchId).innerHTML = title; //Since the title may have changed
-  						this.hide(); //Hide the search dialog after sucessful save
+  						that.updateSearchItem(searchId, searchItemDetails, function() {
+  						  YAHOO.util.Dom.get('search__' + searchId).innerHTML = title; //Since the title may have changed
+    						thisWindow.hide(); //Hide the search dialog after sucessful save
 
-  						//The search has changed, cleanup old results
-  						that.removeSearchTermTweets(grpId, searchId);
-  						//If that removed everything from the group put the empty block back
-  						var currentSummaryGrp = YAHOO.util.Dom.get("summary-group-" + grpId);
-  						if (!currentSummaryGrp.hasChildNodes()) {
-  							currentSummaryGrp.innerHTML = '<p id="emptygroup__' + grpId + '">This group has no search results yet!</p>';
-  						}
+    						//The search has changed, cleanup old results
+    						that.removeSearchTermTweets(grpId, searchId);
+    						//If that removed everything from the group put the empty block back
+    						var currentSummaryGrp = YAHOO.util.Dom.get("summary-group-" + grpId);
+    						if (!currentSummaryGrp.hasChildNodes()) {
+    							currentSummaryGrp.innerHTML = '<p id="emptygroup__' + grpId + '">This group has no search results yet!</p>';
+    						}
 
-  						YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
+    						YAHOO.util.Dom.get('add_search_form').reset(); //Prepare for future use
+  						});
   					}
             setTimeout(function() {
               that.doIntermediateDataRotation.call(that); //Run a rotation
@@ -282,6 +285,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			
 			//Define various event handlers for Dialog
 			var handleSubmit = function () {
+			  var thisWindow = this;
 				//Gather up the form inputs
 				var formData = this.getData(),
 					search_group_title = that.stripTags(YAHOO.lang.trim(formData.search_group_title));
@@ -309,7 +313,7 @@ YAHOO.util.Event.onDOMReady(function () {
   						var searchStringList       = YAHOO.util.Dom.get("active_search_strings");
   						searchStringList.innerHTML = '<li class="list_message">This group has no searches defined!</li>';
 
-  						that.hide(); //Hide the search group dialog after sucessful save
+  						thisWindow.hide(); //Hide the search group dialog after sucessful save
   						YAHOO.util.Dom.get('add_search_group_form').reset(); //Prepare for future use
   						YAHOO.util.Dom.setStyle('add_new_search', 'visibility', 'visible'); //Set to display on tab change, but if first tab this would be missing
   					} else {
@@ -356,6 +360,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			
 			//Define various event handlers for Dialog
 			var handleSubmit = function () {
+			  var thisWindow = this;
 				//Gather up the form inputs
 				var formData = this.getData(),
 					new_search_group_title = that.stripTags(YAHOO.lang.trim(formData.new_search_group_title)),
@@ -371,7 +376,7 @@ YAHOO.util.Event.onDOMReady(function () {
   					that.tabStore[updatedSearchGroupId].label = newTabLabel;
   					that.tabStore[updatedSearchGroupId].nodeReference.innerHTML = newTabLabel;
   					that.refreshTabStore();  //Refresh tabStore to pickup tab changes
-  					this.hide(); //Hide the search group dialog after sucessful save
+  					thisWindow.hide(); //Hide the search group dialog after sucessful save
   					YAHOO.util.Dom.get('rename_search_group_form').reset(); //Prepare form for future use
 					});
 				}
@@ -516,16 +521,14 @@ YAHOO.util.Event.onDOMReady(function () {
   			}));
 
   			//We need to open a tab for each group
-  			for (var i = 0; i < sidelineGroups.rows.length; i++) {		
-  			  sidelineGroup = sidelineGroups.rows.item(i);		
-  				//Collect tweets for this group and build tweet rows for this tab if we have data
-  				that.getTweets(sidelineGroup.id, function(grpTweets) {
+  			for (var i = 0; i < sidelineGroups.rows.length; i++) {	  
+  			  that.getTweets(sidelineGroups.rows.item(i).id, function(grpTweets,sidelineGroup) {
   				  var tweetStr       = '',
     					tweetStrParts  = [],
     					tabLabel	   = '';				
 
     				tweetStrParts[tweetStrParts.length] = '<div id="summary-group-' + sidelineGroup.id + '" class="tweet-container summary-group-' + sidelineGroup.id + '">';
-    				if (grpTweets.rows !== null) {
+    				if (grpTweets.rows.length > 0) {
     					var c = 0, j, numTweets = grpTweets.rows.length;
     					for (j = 0; j < numTweets; j++) {
     					  var grpTweet = grpTweets.rows.item(j);
@@ -568,7 +571,7 @@ YAHOO.util.Event.onDOMReady(function () {
     				tweetStrParts[tweetStrParts.length] = '</div>';
     				//Pull it all back together
     				tweetStr = tweetStrParts.join("");
-
+            
     				//Add a new tab per group
     				tabLabel = that.buildTabText(sidelineGroup.group_name);
     			  that.tabView.addTab(new YAHOO.widget.Tab({
@@ -576,10 +579,9 @@ YAHOO.util.Event.onDOMReady(function () {
     			    content: tweetStr,
     			    active: false
     			  }));
-
-    				that.tabView.appendTo('tweetainer'); //Inject new tab
-  				});
+  				},sidelineGroups.rows.item(i));
   			}
+  			that.tabView.appendTo('tweetainer'); //Inject new tab
         //wait a half a second for ach tab to be created
         var waitTime = Number(sidelineGroups.rows.length)*500;
         setTimeout(function() {
@@ -930,22 +932,21 @@ YAHOO.util.Event.onDOMReady(function () {
 			//Verify tab exists in tabStore, otherwise add
 			for(var t = 0; t < searchGrpTabs.length; t++) {
 				tabText = this.getRawTabText(searchGrpTabs[t].innerHTML);
-				
 				//Add to tabStore if new and not the dynamic trends tab
 				if (tabText !== 'Trends') {
-				  this.getGroupIdFromString(tabText, function(grpIDResult) {
+				  this.getGroupIdFromString(tabText, function(grpIDResult,state) {
 				    var grpID = Number(grpIDResult.rows.item(0).id);
-				    that.getTweetCountForSearchGroup(grpID, function(grpTweetCount) {
+				    that.getTweetCountForSearchGroup(grpID, function(grpTweetCount,state2) {
 				      if (YAHOO.lang.isUndefined(that.tabStore[grpID])) {
     						that.tabStore[grpID] = {
-    							nodeReference: searchGrpTabs[t], 
-    							label: searchGrpTabs[t].innerHTML, 
+    							nodeReference: searchGrpTabs[state2.index], 
+    							label: searchGrpTabs[state2.index].innerHTML, 
     							newTweetCount: 0,
     							totalTweetCount: grpTweetCount
     						};	
     					}
-				    });
-				  });
+				    },{index: state.index});
+				  },{index: t});
 				}
 			}
 			
@@ -984,13 +985,12 @@ YAHOO.util.Event.onDOMReady(function () {
 			var i, 
 				tmpString = '',
 				searchStringList = YAHOO.util.Dom.get("active_search_strings");
-				
-			if (search_strings.data !== null) {
-				var numOfSearches = search_strings.data.length || 'undefined';
+			if (search_strings.rows !== null) {
+				var numOfSearches = search_strings.rows.length || 'undefined';
 				
 				for (i = 0; i < numOfSearches; i++) {
-					var searchId          = search_strings.data[i].id,
-						searchQueryString = search_strings.data[i].search_title;
+					var searchId          = search_strings.rows.item(i).id,
+						searchQueryString = search_strings.rows.item(i).search_title;
 					
 					tmpString += '<li id="search__' + searchId + '" class="search_string_item">' + searchQueryString + '</li>';
 				}
@@ -1012,20 +1012,21 @@ YAHOO.util.Event.onDOMReady(function () {
 			var that = this; //Needed to set proper scope in the callback
 			
 			var req = new XMLHttpRequest();
-		   	req.onreadystatechange = function () { 
-		        if (req.readyState === 4) {
-					//Parsing JSON strings can throw a SyntaxError exception, so we wrap the call in a try catch block
+		  req.onreadystatechange = function () { 
+		    if (req.readyState === 4) {
+				  //Parsing JSON strings can throw a SyntaxError exception, so we wrap the call in a try catch block
 					try {
 						var jData = YAHOO.lang.JSON.parse(req.responseText);
 						callback.call(that, jData, reference_string, group_id, searches_id);
 					} 
 					catch (e) {
-						air.trace("Unabled to parse JSON");
+						Titanium.API.debug("Unabled to parse JSON");
+						console.log(e.message)
 					}
-		        }
-		    };
-		    req.open('GET', url, true);
-		    req.send(null); 
+		    }
+		  };
+		  req.open('GET', url, true);
+		  req.send(null); 
 		},
 		/**
 		 * Generic function used to fetch external JSON data
@@ -1092,23 +1093,32 @@ YAHOO.util.Event.onDOMReady(function () {
 						//Replace replies (i.e.) @someone
 						hightlighted_text = hightlighted_text.replace(/@(\w+)/gim, '<a title="open in browser" class="tweet_link" href="http://twitter.com/$1" target="_blank">@$1</a>');
 						
-						this.addTweet(hightlighted_text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id, function(localTweetResult) {
-						  local_tweet_id = localTweetResult.data[0].id;
+						this.addTweet(hightlighted_text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id, function(localTweetResult,state) {
 						  //Construct a processed tweet object.  Will hand object off to addToTab.
   						var processedTweet = {
-  							local_tweet_id: local_tweet_id,
-  							tweet_text: hightlighted_text,
-  							to_user_id: to_user_id,
-  							from_user: from_user,
-  							twitter_id: twitter_id,
-  							from_user_id: from_user_id,
-  							profile_image_url: profile_image_url,
-  							created_at: created_at,
-  							group_id: group_id,
-  							searches_id: searches_id
+  							local_tweet_id: localTweetResult.rows.item(0).id,
+  							tweet_text: state.hightlighted_text,
+  							to_user_id: state.to_user_id,
+  							from_user: state.from_user,
+  							twitter_id: state.twitter_id,
+  							from_user_id: state.from_user_id,
+  							profile_image_url: state.profile_image_url,
+  							created_at: state.created_at,
+  							group_id: state.group_id,
+  							searches_id: state.searches_id
   						};
-
+              console.log(processedTweet.local_tweet_id);
   						that.addToTab(processedTweet); //Add new tweet to matching group tab
+						}, {
+						  hightlighted_text: hightlighted_text,
+						  to_user_id: to_user_id,
+						  from_user: from_user,
+						  twitter_id: twitter_id,
+						  from_user_id: from_user_id,
+						  profile_image_url: profile_image_url,
+						  created_at: created_at,
+						  group_id: group_id,
+						  searches_id: searches_id
 						});	
 					}
 				}
@@ -1366,7 +1376,7 @@ YAHOO.util.Event.onDOMReady(function () {
 			  callback.call(this,1); //We know the favorites group is numero uno in the db
 			} else {
 			  this.getGroupIdFromString(tabText,function(grpIdResult) {
-			    if (grpIdResult.rows.length > 0) {
+			    if (grpIdResult.rows.length <= 0) {
 			      callback.call(sideline,'undefined');
 			    }
 			    else {
@@ -1585,14 +1595,13 @@ YAHOO.util.Event.onDOMReady(function () {
   					sideline.addSearchItem(trendSearchItem);
 
   					//New group was created so add the tab and make it active
-  					tabLabel = this.buildTabText(trendTitle);
+  					tabLabel = sideline.buildTabText(trendTitle);
   					sideline.tabView.addTab(new YAHOO.widget.Tab({ 
-  													label: tabLabel,
-  													active: false,
-  													content: '<div id="summary-group-' + newTrendGrpID + '" class="tweet-container summary-group-' + newTrendGrpID + '">' +
-  																'<p id="emptygroup__' + newTrendGrpID + '">This group has no search results yet!</p><div>'
-  												})
-  											);
+  					  label: tabLabel,
+  						active: false,
+  						content: '<div id="summary-group-' + newTrendGrpID + '" class="tweet-container summary-group-' + newTrendGrpID + '">' +
+  											'<p id="emptygroup__' + newTrendGrpID + '">This group has no search results yet!</p><div>'
+  					}));
 
   					//Cache the new tab details, update click handlers, and set active tab to the newly added tab
   					sideline.remove(YAHOO.util.Dom.get("add_new_group"));
@@ -1650,29 +1659,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Used to create system notifications displayed when new search results are found
 		 */
 		displaySearchResultNotification : function() {
-		  //TODO: replace with actual notifications
-		  alert("New Tweets received!");
-		  /*
-			var that    = this,
-				options = new air.NativeWindowInitOptions();
-				
-			options.type = "lightweight";
-			options.transparent  = true;
-			options.systemChrome = air.NativeWindowSystemChrome.NONE;
-			
-			var notificationHTML,
-				notificationTimer, 
-				visibleBounds = air.Screen.mainScreen.visibleBounds, 
-				windowBounds  = new air.Rectangle(visibleBounds.right - 300 - 40, 40, 300, 200);
-				
-			//We keep a global reference to this object so that we can be sure to close notification windows on quit as well
-			this.desktopNotificationLoader = air.HTMLLoader.createRootWindow(true, options, true, windowBounds);
-			
-			//Make the body background transparent
-			this.desktopNotificationLoader.paintsDefaultBackground = false;
-			
-			//Define the markup for our notification window
-			notificationHTML = '<html>' +
+		  //Define the markup for our notification window
+			var notificationHTML = '<html>' +
 									'<head><title>Sideline Notification</title></head>' +
 									'<body style="opacity: 0.5;">' +
 										'<div style="color: white; background-color: black; padding: 20px; margin: 10px; -webkit-border-radius: 10px; -webkit-box-shadow: 0px 0px 10px #000;">' +
@@ -1683,28 +1671,12 @@ YAHOO.util.Event.onDOMReady(function () {
 										'</div>' +
 									'</body>' +
 									'</html>';
+		  var notification = Titanium.Notification.createNotification(window);
+      notification.setTitle("New Tweets Received!");
+      notification.setMessage(notificationHTML);
+      notification.setIcon("app://images/ybang_16.png");
+      notification.show();
 									
-			this.desktopNotificationLoader.loadString(notificationHTML);
-			this.desktopNotificationLoader.stage.nativeWindow.alwaysInFront = true;
-			this.desktopNotificationLoader.stage.nativeWindow.height = this.desktopNotificationLoader.window.document.height;
-			
-			//Window is automatically removed after so many seconds
-			notificationTimer = setTimeout(function(){
-				try {
-					that.desktopNotificationLoader.stage.nativeWindow.close();
-					that.desktopNotificationLoader = null;
-				} catch(e) {}
-			}, 5000);
-			
-			//Allow users to manually dismiss the window
-			this.desktopNotificationLoader.addEventListener("click", function(){
-				clearTimeout(notificationTimer);
-				try {
-					that.desktopNotificationLoader.stage.nativeWindow.close();
-					that.desktopNotificationLoader = null;
-				} catch(e) {}
-			});
-			*/
 		},
 		/**
 		 * Used to locate and start import of a json data file of search groups and related search terms
@@ -1997,13 +1969,14 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * @param {Object} group_name
 		 */
 		updateSearchGroup : function (old_group_name, new_group_name,callback) {
+		  var that = this;
 		  this.getGroupIdFromString(old_group_name,function(searchGrpResult) {
 		    var searchGrpId = searchGrpResult.rows.item(0).id;
 		    var sqlParameters = [];
 		    var updateSQL = "UPDATE search_groups SET group_name = ? WHERE id = ?";
 		    sqlParameters[sqlParameters.length] = new_group_name;
 				sqlParameters[sqlParameters.length] = searchGrpId;
-				this.doQuery(updateSQL, sqlParameters, function(tx,result) {
+				that.doQuery(updateSQL, sqlParameters, function(tx,result) {
 				  callback.call(this,searchGrpId);
 				});
 		  });
@@ -2012,27 +1985,27 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Returns all tweets for passed groups
 		 * @param {Object} sideline_group_id
 		 */
-		getTweets : function (sideline_group_id,callback) {
+		getTweets : function (sideline_group_id,callback,sidelineGroup) {
 			var sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT id, text, from_user, twitter_id, profile_image_url, created_at, sideline_group_id, searches_id FROM tweets" +
 						        " WHERE sideline_group_id = ?" +
 						        " ORDER BY twitter_id DESC",
 			this.doQuery(selectSQL, sqlParameters,function(tx,result) {
-			  callback.call(this,result);
+			  callback.call(this,result,sidelineGroup);
 			});
 		},
 		/**
 		 * Returns count of tweets/search results for passed search group
 		 * @param {Object} sideline_group_id
 		 */
-		getTweetCountForSearchGroup : function (sideline_group_id,callback) {
+		getTweetCountForSearchGroup : function (sideline_group_id,callback,state) {
 			var tweetCount    = 0,
 				sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT count(id) AS tweet_count FROM tweets" +
 						        " WHERE sideline_group_id = ?",
 			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
 			  if (result !== null && result.rows.length === 1) {
-					callback.call(this,Number(result.rows.item(0).tweet_count));
+					callback.call(this,Number(result.rows.item(0).tweet_count),state);
 				}
 			});
 		},
@@ -2093,8 +2066,9 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * @param {Object} group_id
 		 * @param {Object} searches_id
 		 */
-		addTweet : function (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id, callback) {
-			var sqlParameters = [],
+		addTweet : function (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, group_id, searches_id, callback, state) {
+			var that = this,
+			  sqlParameters = [],
 				insertSQL     = "INSERT INTO tweets (text, to_user_id, from_user, twitter_id, from_user_id, profile_image_url, created_at, sideline_group_id, searches_id)" +
 		    					" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 								
@@ -2109,8 +2083,10 @@ YAHOO.util.Event.onDOMReady(function () {
 				sqlParameters[sqlParameters.length] = Number(searches_id);
 		
 			this.doQuery(insertSQL, sqlParameters,function(tx,result) {
-			  this.doQuery("SELECT last_insert_rowid() as id",[],function(tx,result) {
-			    callback.call(this,result);
+			  that.doQuery("SELECT * FROM tweets WHERE text = ? AND to_user_id = ? AND from_user = ? AND twitter_id = ? "+
+			    "AND from_user_id = ? AND profile_image_url = ? AND created_at = ? AND sideline_group_id = ?"+
+			    " AND searches_id = ?",sqlParameters,function(tx,result) {
+			    callback.call(this,result, state);
 			  });
 			});
 		},
@@ -2141,11 +2117,11 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Returns group_id of the passed group string
 		 * @param {Object} group_string
 		 */
-		getGroupIdFromString : function (group_string,callback) {
+		getGroupIdFromString : function (group_string,callback,state) {
 		  var sqlParameters = [ group_string ],
 				selectSQL     = "SELECT id FROM search_groups WHERE group_name = ?";
 			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
-			  callback.call(this,result);
+			  callback.call(this,result,state);
 			});	
 		},
 		/**
@@ -2203,7 +2179,16 @@ YAHOO.util.Event.onDOMReady(function () {
 		 */
 		getAllSidelineGroups : function (callback) {
 			var selectSQL = "SELECT id, group_name FROM search_groups WHERE active='Y' ORDER BY id ASC",
-			sidelineGroups = this.doQuery(selectSQL,[],function(tx,result) {
+			this.doQuery(selectSQL,[],function(tx,result) {
+			  callback.call(this,result);
+			});
+		},
+		/**
+		 * Get an active search group
+		 */
+		getSidelineGroup : function (id,callback) {
+			var selectSQL = "SELECT * FROM search_groups WHERE id = ? ORDER BY id ASC",
+			this.doQuery(selectSQL,[id],function(tx,result) {
 			  callback.call(this,result);
 			});
 		},
@@ -2455,4 +2440,5 @@ YAHOO.util.Event.onDOMReady(function () {
 		});
 		
 	})();
+
 });
