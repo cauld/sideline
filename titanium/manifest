@@ -1,10 +1,10 @@
 #appname:ti-sideline
-#appid:com.appcelerator_inc_.ti_sideline
-#publisher:Appcelerator Inc.
-#image:appc150x119.png
-#url:http://appcelerator.org
-#guid:bb25890b-b5cd-45e4-9cf6-beb0eee03367
-#desc:Titanium Port of Yahoo! Sideline
+#appid:com.foo.ti_sideline
+#publisher:Yahoo! Inc.
+#image:ybang_128.png
+#url:http://sideline.yahoo.com
+#guid:7a974620-b5ab-4d4e-86d3-9fba5efb3371
+#desc:<input id="project_desc_value_input" value="foo" type="text" style="width:350px" maxlength="150">
 runtime:0.3
 api:0.3
 tiapp:0.3

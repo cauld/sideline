@@ -1,26 +1,26 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <ti:app xmlns:ti='http://ti.appcelerator.org'>
-  <id>com.appcelerator_inc_.ti_sideline</id>
-  <name>ti-sideline</name>
-  <version>1.0</version>
-  <publisher>Appcelerator Inc.</publisher>
-  <url>http://appcelerator.org</url>
-  <copyright>2009 by Appcelerator Inc.</copyright>
-  <window>
-    <id>initial</id>
-    <title>ti-sideline</title>
-    <url>app://index.html</url>
-    <width>960</width>
-    <max-width>3000</max-width>
-    <min-width>0</min-width>
-    <height>800</height>
-    <max-height>3000</max-height>
-    <min-height>0</min-height>
-    <fullscreen>false</fullscreen>
-    <resizable>true</resizable>
-    <chrome scrollbars="true">true</chrome>
-    <maximizable>true</maximizable>
-    <minimizable>true</minimizable>
-    <closeable>true</closeable>
-  </window>
+<id>com.yahoo__inc_.ti_sideline</id>
+<name>ti-sideline</name>
+<version>1.0</version>
+<publisher>Yahoo! Inc.</publisher>
+<url>http://sideline.yahoo.com</url>
+<copyright>2009, Yahoo! Inc.</copyright>
+<window>
+<id>initial</id>
+<title>ti-sideline</title>
+<url>app://index.html</url>
+<width>1024</width>
+<max-width>3000</max-width>
+<min-width>1000</min-width>
+<height>768</height>
+<max-height>3000</max-height>
+<min-height>768</min-height>
+<fullscreen>false</fullscreen>
+<resizable>true</resizable>
+<chrome scrollbars="true">true</chrome>
+<maximizable>false</maximizable>
+<minimizable>true</minimizable>
+<closeable>true</closeable>
+</window>
 </ti:app>
