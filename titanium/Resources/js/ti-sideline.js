@@ -1021,7 +1021,6 @@ YAHOO.util.Event.onDOMReady(function () {
 					} 
 					catch (e) {
 						Titanium.API.debug("Unabled to parse JSON");
-						console.log(e.message)
 					}
 		    }
 		  };
@@ -1975,7 +1974,8 @@ YAHOO.util.Event.onDOMReady(function () {
 			var sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT id, text, from_user, twitter_id, profile_image_url, created_at, sideline_group_id, searches_id FROM tweets" +
 						        " WHERE sideline_group_id = ?" +
-						        " ORDER BY twitter_id DESC",
+						        " ORDER BY twitter_id DESC";
+						        
 			this.doQuery(selectSQL, sqlParameters,function(tx,result) {
 			  callback.call(this,result,sidelineGroup);
 			});
@@ -1988,7 +1988,8 @@ YAHOO.util.Event.onDOMReady(function () {
 			var tweetCount    = 0,
 				sqlParameters = [ Number(sideline_group_id) ],
 				selectSQL 	  = "SELECT count(id) AS tweet_count FROM tweets" +
-						        " WHERE sideline_group_id = ?",
+						        " WHERE sideline_group_id = ?";
+						        
 			this.doQuery(selectSQL, sqlParameters, function(tx,result) {
 			  if (result !== null && result.rows.length === 1) {
 					callback.call(this,Number(result.rows.item(0).tweet_count),state);
@@ -2001,7 +2002,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		getSearchItemParams : function(search_id,callback) {
 			var sqlParameters = [ Number(search_id) ],
 				selectSQL = "SELECT id, group_id, search_title, q, ands, ors, nots, phrase, tag, user_from, user_to, ref, pa, na, aq" +
-			 				" FROM searches WHERE id = ?",
+			 				" FROM searches WHERE id = ?";
+			 				
 			this.doQuery(selectSQL, sqlParameters,function(tx,result) {
 			  callback.call(this,result);
 			});
@@ -2127,12 +2129,12 @@ YAHOO.util.Event.onDOMReady(function () {
 		 */
 		getCountOfActiveQueries : function (callback) {
 			var selectSQL = "SELECT count(id) as total_search_count" +
-										    " FROM searches WHERE active='Y'",
-				activeSearchCount        = 0;
+							" FROM searches WHERE active='Y'",
+				activeSearchCount = 0;
 				
 			this.doQuery(selectSQL,[],function(tx,result) {
 			  if (result !== null && result.rows.length === 1) {
-					callback.call(this,Number(result.rows.item(0).total_search_count))
+					callback.call(this,Number(result.rows.item(0).total_search_count));
 				}
 			});
 		},
@@ -2164,7 +2166,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Get all active search groups
 		 */
 		getAllSidelineGroups : function (callback) {
-			var selectSQL = "SELECT id, group_name FROM search_groups WHERE active='Y' ORDER BY id ASC",
+			var selectSQL = "SELECT id, group_name FROM search_groups WHERE active='Y' ORDER BY id ASC";
+			
 			this.doQuery(selectSQL,[],function(tx,result) {
 			  callback.call(this,result);
 			});
@@ -2173,7 +2176,8 @@ YAHOO.util.Event.onDOMReady(function () {
 		 * Get an active search group
 		 */
 		getSidelineGroup : function (id,callback) {
-			var selectSQL = "SELECT * FROM search_groups WHERE id = ? ORDER BY id ASC",
+			var selectSQL = "SELECT * FROM search_groups WHERE id = ? ORDER BY id ASC";
+			
 			this.doQuery(selectSQL,[id],function(tx,result) {
 			  callback.call(this,result);
 			});
