@@ -1,0 +1,77 @@
+{"searches" : [
+        {
+            "search_group_name": "Sample Query Group",
+            "search_terms":
+            [
+                { 
+                    "search_title": "Test",
+                    "simple_query": "test",
+                    "ands": "", 
+                    "ors": "",
+                    "nots": "",
+                    "phrase": "", 
+                    "tag": "", 
+                    "user_from": "", 
+                    "user_to": "", 
+                    "ref": "", 
+                    "positive_attitude": "false",  
+                    "negative_attitude": "false", 
+                    "ask_question": "false" 
+                },
+                { 
+                    "search_title": "Yahoo",
+                    "simple_query": "",
+                    "ands": "", 
+                    "ors": "yahoo yui",
+                    "nots": "", 
+                    "phrase": "", 
+                    "tag": "", 
+                    "user_from": "", 
+                    "user_to": "", 
+                    "ref": "", 
+                    "positive_attitude": "false",  
+                    "negative_attitude": "false", 
+                    "ask_question": "false" 
+                }
+            ]
+        },
+        
+        {
+            "search_group_name": "Sample Query Group2",
+            "search_terms":
+            [
+                { 
+                    "search_title": "Test2",
+                    "simple_query": "test",
+                    "ands": "", 
+                    "ors": "",
+                    "nots": "",
+                    "phrase": "", 
+                    "tag": "", 
+                    "user_from": "", 
+                    "user_to": "", 
+                    "ref": "", 
+                    "positive_attitude": "false",  
+                    "negative_attitude": "false", 
+                    "ask_question": "false" 
+                },
+                { 
+                    "search_title": "Yahoo2",
+                    "simple_query": "",
+                    "ands": "", 
+                    "ors": "yahoo yui",
+                    "nots": "", 
+                    "phrase": "", 
+                    "tag": "", 
+                    "user_from": "", 
+                    "user_to": "", 
+                    "ref": "", 
+                    "positive_attitude": "false",  
+                    "negative_attitude": "false", 
+                    "ask_question": "false" 
+                }
+            ]
+        }
+        
+    ]
+}
