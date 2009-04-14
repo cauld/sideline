@@ -1,10 +1,10 @@
 #appname:ti-sideline
-#appid:com.foo.ti_sideline
+#appid:com.yahoo__inc_.ti_sideline
 #publisher:Yahoo! Inc.
 #image:ybang_48.png
 #url:http://sideline.yahoo.com
-#guid:7a974620-b5ab-4d4e-86d3-9fba5efb3371
-#desc:Sideline is a desktop application that allows advanced searching and monitoring of the Twitter public timeline.
+#guid:cb0839fd-27c7-438d-902d-bfdd72890fd2
+#desc:Sideline is a desktop application that allows advanced searching and monitoring of the Twitter public timeline
 runtime:0.3
 api:0.3
 tiapp:0.3
